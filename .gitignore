@@ -9,3 +9,6 @@ buildNumber.properties
 javajunior.iml
 .idea
 .DS_Store
+main.iml
+test.iml
+.gitignore
