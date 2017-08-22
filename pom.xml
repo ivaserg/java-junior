@@ -22,6 +22,19 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>com.db.edu.ivaserg</groupId>
+        <artifactId>maven-date-info-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <phase>clean</phase>
+            <goals>
+              <goal>date-info</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
