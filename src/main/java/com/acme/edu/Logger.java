@@ -4,7 +4,6 @@ package com.acme.edu;
 public class Logger  {
 
 
-
     public static void log(int message) {
         logPrimitive(message);
     }
@@ -29,11 +28,11 @@ public class Logger  {
         log("reference: ", message);
     }
 
-    public static void logPrimitive(Object message) {
+    private static void logPrimitive(Object message) {
         log("primitive: ", message);
     }
     
-    public static void log(String appendString, Object message) {
+    private static void log(String appendString, Object message) {
         System.out.println(appendString + message);
     }
 
