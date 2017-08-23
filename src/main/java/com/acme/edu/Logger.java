@@ -5,11 +5,11 @@ public class Logger  {
 
 
     public static void log(int message) {
-        logPrimitive(message);
+        log("primitive: ", message);
     }
 
     public static void log(byte message) {
-        logPrimitive(message);
+        log("primitive: ", message);
     }
 
     public static void log(char message) {
@@ -21,23 +21,18 @@ public class Logger  {
     }
 
     public static void log(boolean message) {
-        logPrimitive(message);
+        log("primitive: ", message);
     }
 
     public static void log(Object message) {
         log("reference: ", message);
     }
 
-    private static void logPrimitive(Object message) {
-        log("primitive: ", message);
-    }
-    
     private static void log(String appendString, Object message) {
         System.out.println(appendString + message);
     }
 
     public static void main(String[] args) {
 
-    
     }
 }
