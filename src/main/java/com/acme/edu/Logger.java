@@ -1,52 +1,38 @@
 package com.acme.edu;
 
 
-public class Logger {
-
-    private static Logger singletonLogger;
-
-    private Logger() {
-    }
-
-    public Logger createInstance() {
-        if (singletonLogger == null ) {
-            synchronized (Logger.class) {
-             if (singletonLogger == null) {
-                 singletonLogger = new Logger();
-             }
-            }
-        }
-        return singletonLogger;
-    }
-
-
+public class Logger  {
 
     public static void log(int message) {
-        System.out.println("primitive: " + message);
+        log("primitive: ", message);
     }
 
     public static void log(byte message) {
-        System.out.println("primitive: " + message);
+        log("primitive: ", message);
     }
 
     public static void log(char message) {
-        System.out.println("char: " + message);
+        log("char: ", message);
     }
 
     public static void log(String message) {
-        System.out.println("string: " + message);
+        log("string: ", message);
     }
 
     public static void log(boolean message) {
-        System.out.println("primitive: " + message);
+        log("primitive: ", message);
     }
 
     public static void log(Object message) {
-        System.out.println("reference: " + message);
+        log("reference: ", message);
+    }
+    
+    public static void log(String appendString, Object message) {
+        System.out.println(appendString + message);
     }
 
     public static void main(String[] args) {
 
-
+    
     }
 }
