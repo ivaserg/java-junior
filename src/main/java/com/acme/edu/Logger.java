@@ -14,7 +14,8 @@ enum State
     CHAR_STATE("char: "),
     BOOLEAN_STATE("primitive: "),
     PRIMITIVE_ARRAY_STATE("primitives array: "),
-    PRIMITIVE_MATRXI_ARRAY_STATE("primitives matrix: "),
+    PRIMITIVES_MATRIX_ARRAY_STATE("primitives matrix: "),
+    PRIMITIVES_MULTIMATRIX_ARRAY_STATE("primitives multimatrix: "),
     OBJECT_STATE("reference: ");
 
     private final String relevantTypeDescription;
@@ -134,7 +135,7 @@ public class Logger {
     }
 
     public static void log(int[][] message) {
-        changeState(State.PRIMITIVE_MATRXI_ARRAY_STATE);
+        changeState(State.PRIMITIVES_MATRIX_ARRAY_STATE);
         StringBuilder sb = new StringBuilder("{"+lineSeparator());
         for (int[] i : message) {
             sb.append(arrayToString(i)).append(lineSeparator());
@@ -145,6 +146,10 @@ public class Logger {
         resetState();
     }
 
+    public static void log(int[][][] message){
+        changeState(State.PRIMITIVES_MULTIMATRIX_ARRAY_STATE);
+        StringBuilder sb = new StringBuilder("{"+lineSeparator());
+    }
 
     private static String arrayToString(int[] array) {
         return Arrays.stream(getStringArray(array))
@@ -164,11 +169,16 @@ public class Logger {
     }
 
     public static void main(String[] args) {
-        Logger.log(new int[] {1,2,3});
-        Logger.log(new int[] {1,2,3});
-        Logger.log(new int[][] {{-1, 0, 1}, {1, 2, 3}, {-1, -2, -3}});
-        Logger.log("str 1");
+        Logger.log(new int[][][][] {{{{0}}}});
         Logger.endLogSession();
+
+        System.out.println(
+                "primitives multimatrix: {" + lineSeparator() +
+                        "{" + lineSeparator() + "{" +  lineSeparator() + "{" +  lineSeparator() +
+                        "0" +  lineSeparator() +
+                        "}" +  lineSeparator() +"}" +  lineSeparator() +"}" +  lineSeparator() +
+                        "}" +  lineSeparator()
+        );
     }
 
 }

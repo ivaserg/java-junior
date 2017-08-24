@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import static java.lang.System.lineSeparator;
 
 public class LoggerTest implements SysoutCaptureAndAssertionAbility {
     //region given
@@ -29,6 +30,7 @@ public class LoggerTest implements SysoutCaptureAndAssertionAbility {
     public void shouldLogIntegersArray() throws IOException {
         //region when
         Logger.log(new int[] {-1, 0, 1});
+        Logger.endLogSession();
         //endregion
 
         //region then
@@ -42,36 +44,38 @@ public class LoggerTest implements SysoutCaptureAndAssertionAbility {
     public void shouldLogIntegersMatrix() throws IOException {
         //region when
         Logger.log(new int[][] {{-1, 0, 1}, {1, 2, 3}, {-1, -2, -3}});
+        Logger.endLogSession();
         //endregion
 
         //region then
         assertSysoutEquals(
-            "primitives matrix: {" + System.lineSeparator() +
-                "{-1, 0, 1}" + System.lineSeparator() +
-                "{1, 2, 3}" + System.lineSeparator() +
-                "{-1, -2, -3}" + System.lineSeparator() +
-            "}" + System.lineSeparator()
+            "primitives matrix: {" + lineSeparator() +
+                "{-1, 0, 1}" + lineSeparator() +
+                "{1, 2, 3}" + lineSeparator() +
+                "{-1, -2, -3}" + lineSeparator() +
+            "}" + lineSeparator()
         );
         //endregion
     }
-/*
+
     @Test
     public void shouldLogIntegersMulitidimentionalArray() throws IOException {
         //region when
         Logger.log(new int[][][][] {{{{0}}}});
+        Logger.endLogSession();
         //endregion
 
         //region then
         assertSysoutEquals(
-            "primitives multimatrix: {\n" +
-                "{\n" + "{\n" + "{\n" +
-                    "0\n" +
-                "}\n" + "}\n" + "}\n" +
-            "}\n"
+            "primitives multimatrix: {" + lineSeparator() +
+                "{" + lineSeparator() + "{" +  lineSeparator() + "{" +  lineSeparator() +
+                    "0" +  lineSeparator() +
+                "}" +  lineSeparator() +"}" +  lineSeparator() +"}" +  lineSeparator() +
+            "}" +  lineSeparator()
         );
         //endregion
     }
-
+ /*
     @Test
     public void shouldLogStringsWithOneMethodCall() throws IOException {
         //region when
