@@ -6,13 +6,14 @@ import java.util.stream.Collectors;
 
 enum State
 {
-    NO_STATE("primitive: "),
+    INIT_STATE("primitive: "),
     INT_STATE("primitive: "),
     STRING_STATE("string: "),
     BYTE_STATE("primitive: "),
     CHAR_STATE("char: "),
     BOOLEAN_STATE("primitive: "),
     PRIMITIVE_ARRAY_STATE("primitives array: "),
+    PRIMITIVE_MATRXI_ARRAY_STATE("primitives matrix: "),
     OBJECT_STATE("reference: ");
 
     private final String relevantTypeDescription;
@@ -31,7 +32,7 @@ public class Logger {
     private static byte sumOfBytes;
     private static String currentString = "";
     private static int counter;
-    private static State state = State.NO_STATE;
+    private static State state = State.INIT_STATE;
     private static String buffer = "";
 
     static {
@@ -43,18 +44,19 @@ public class Logger {
         }));
     }
 
+
     private static void resetState() {
         sumOfIntegers = 0;
         sumOfBytes = 0;
         currentString = "";
         counter = 0;
         buffer = "";
-        state = State.NO_STATE;
+        state = State.INIT_STATE;
     }
 
 
     private static void changeState(State newState) {
-        if (state != State.NO_STATE && state != newState) {
+        if (state != State.INIT_STATE && state != newState) {
             flush();
             resetState();
         }
@@ -103,6 +105,7 @@ public class Logger {
     }
 
     public static void log(String message) {
+        if (message == null) return;
         changeState(State.STRING_STATE);
         if (!currentString.isEmpty() && !currentString.equals(message)) {
             flush();
@@ -110,8 +113,8 @@ public class Logger {
         }
         counter++;
         currentString = message;
-        String numStr = counter > 1 ? " (x" + counter + ")" : "";
-        buffer = currentString + numStr;
+        String numberOfStrings = counter > 1 ? " (x" + counter + ")" : "";
+        buffer = currentString + numberOfStrings;
     }
 
     public static void log(boolean message) {
@@ -122,6 +125,7 @@ public class Logger {
     }
 
     public static void log(Object message) {
+        if (message == null) return;
         changeState(State.OBJECT_STATE);
         buffer = message.toString();
         flush();
@@ -135,6 +139,15 @@ public class Logger {
         resetState();
 
     }
+
+    public static void log(int[][] message) {
+        changeState(State.PRIMITIVE_MATRXI_ARRAY_STATE);
+//        buffer = arrayToString(message);
+        flush();
+        resetState();
+
+    }
+
 
     public static String arrayToString(int[] array) {
         return Arrays.stream(
@@ -152,6 +165,7 @@ public class Logger {
     private static void printOut(String input){
         System.out.println(input);
     }
+
 
 
 }
