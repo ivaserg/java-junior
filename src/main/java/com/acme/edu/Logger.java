@@ -1,12 +1,6 @@
 package com.acme.edu;
 
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 enum State
 {
     NO_STATE("primitive: "),
@@ -15,7 +9,7 @@ enum State
     BYTE_STATE("primitive: "),
     CHAR_STATE("char: "),
     BOOLEAN_STATE("primitive: "),
-    PRIMITIVE_ARRAY_STATE("primitive array: "),
+    PRIMITIVE_ARRAY_STATE("primitives array: "),
     OBJECT_STATE("reference: ");
 
     private final String relevantTypeDescription;
@@ -133,14 +127,25 @@ public class Logger {
 
     public static void log(int[] message) {
         changeState(State.PRIMITIVE_ARRAY_STATE);
-        buffer = arrarToString(message);
+        buffer = arrayToString(message);
         flush();
         resetState();
 
     }
 
-    public static String arrarToString(int[] array) {
-        return "";
+    public static String arrayToString(int[] array) {
+        String result = "";
+
+        if (array.length > 0) {
+            StringBuilder sb = new StringBuilder("{");
+           for (int i : array) {
+               sb.append(i).append(", ");
+           }
+
+           result = sb.substring(0, sb.length()-2);
+           result = result + "}";
+        } return result;
+
     }
 
 
@@ -151,8 +156,7 @@ public class Logger {
 
     public static void main(String[] args) {
 
-        Logger.log(new int[] {-1, 0, 1});
-
+ Logger.log(new int[] {-1, 2, 8});
 
 
     }
