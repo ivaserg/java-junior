@@ -1,6 +1,9 @@
 package com.acme.edu;
 
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 enum State
 {
     NO_STATE("primitive: "),
@@ -134,17 +137,13 @@ public class Logger {
     }
 
     public static String arrayToString(int[] array) {
-        String result = "";
-
-        if (array.length > 0) {
-            StringBuilder sb = new StringBuilder("{");
-           for (int i : array) {
-               sb.append(i).append(", ");
-           }
-
-           result = sb.substring(0, sb.length()-2);
-           result = result + "}";
-        } return result;
+        return Arrays.stream(
+                               Arrays.stream(array)
+                              .sorted()
+                              .mapToObj(String::valueOf)
+                              .toArray(String[]::new)
+                            )
+                .collect(Collectors.joining(",", "{", "}"));
 
     }
 
