@@ -154,11 +154,5 @@ public class Logger {
         System.out.println(input);
     }
 
-    public static void main(String[] args) {
-
- Logger.log(new int[] {-1, 2, 8});
-
-
-    }
 
 }
