@@ -3,6 +3,7 @@ package com.acme.edu;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import static java.lang.System.lineSeparator;
 
 enum State
 {
@@ -32,17 +33,8 @@ public class Logger {
     private static byte sumOfBytes;
     private static String currentString = "";
     private static int counter;
-    private static State state = State.INIT_STATE;
+    private static State currentState = State.INIT_STATE;
     private static String buffer = "";
-
-    static {
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            @Override
-            public void run() {
-                endLogSession();
-            }
-        }));
-    }
 
 
     private static void resetState() {
@@ -51,22 +43,23 @@ public class Logger {
         currentString = "";
         counter = 0;
         buffer = "";
-        state = State.INIT_STATE;
+        currentState = State.INIT_STATE;
     }
 
 
     private static void changeState(State newState) {
-        if (state != State.INIT_STATE && state != newState) {
+        if (currentState != State.INIT_STATE && currentState != newState) {
             flush();
             resetState();
         }
-        state = newState;
+        currentState = newState;
     }
 
     private static void flush() {
-        printOut(state.getRelevantTypeDescription() + buffer);
+        printOut(currentState.getRelevantTypeDescription() + buffer);
         buffer = "";
     }
+
 
     public static void log(int message) {
         changeState(State.INT_STATE);
@@ -135,37 +128,47 @@ public class Logger {
     public static void log(int[] message) {
         changeState(State.PRIMITIVE_ARRAY_STATE);
         buffer = arrayToString(message);
+
         flush();
         resetState();
-
     }
 
     public static void log(int[][] message) {
         changeState(State.PRIMITIVE_MATRXI_ARRAY_STATE);
-//        buffer = arrayToString(message);
+        StringBuilder sb = new StringBuilder("{"+lineSeparator());
+        for (int[] i : message) {
+            sb.append(arrayToString(i)).append(lineSeparator());
+        }
+        sb.append('}');
+        buffer = sb.toString();
         flush();
         resetState();
-
     }
 
 
-    public static String arrayToString(int[] array) {
-        return Arrays.stream(
-                               Arrays.stream(array)
-                              .sorted()
-                              .mapToObj(String::valueOf)
-                              .toArray(String[]::new)
-                            )
-                .collect(Collectors.joining(",", "{", "}"));
+    private static String arrayToString(int[] array) {
+        return Arrays.stream(getStringArray(array))
+                     .collect(Collectors.joining(", ", "{", "}"));
 
     }
 
+    private static String[] getStringArray(int[] array) {
+        return Arrays.stream(array)
+                       .mapToObj(String::valueOf)
+                       .toArray(String[]::new);
+    }
 
 
     private static void printOut(String input){
         System.out.println(input);
     }
 
-
+    public static void main(String[] args) {
+        Logger.log(new int[] {1,2,3});
+        Logger.log(new int[] {1,2,3});
+        Logger.log(new int[][] {{-1, 0, 1}, {1, 2, 3}, {-1, -2, -3}});
+        Logger.log("str 1");
+        Logger.endLogSession();
+    }
 
 }
