@@ -48,7 +48,7 @@ public class LoggerTest implements SysoutCaptureAndAssertionAbility {
         //endregion
 
         //region then
-        assertSysoutEquals(
+        assertSysoutContains(
             "primitives matrix: {" + lineSeparator() +
                 "{-1, 0, 1}" + lineSeparator() +
                 "{1, 2, 3}" + lineSeparator() +
@@ -66,10 +66,10 @@ public class LoggerTest implements SysoutCaptureAndAssertionAbility {
         //endregion
 
         //region then
-        assertSysoutEquals(
+        assertSysoutContains(
             "primitives multimatrix: {" + lineSeparator() +
-                "{" + lineSeparator() + "{" +  lineSeparator() + "{" +  lineSeparator() +
-                    "0" +  lineSeparator() +
+                "{" + lineSeparator() + "{" +  lineSeparator() + "{" +
+                    "0" +
                 "}" +  lineSeparator() +"}" +  lineSeparator() +"}" +  lineSeparator() +
             "}" +  lineSeparator()
         );

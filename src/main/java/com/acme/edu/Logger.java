@@ -3,11 +3,11 @@ package com.acme.edu;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
+
 import static java.lang.System.lineSeparator;
 
-enum State
-{
-    INIT_STATE("primitive: "),
+enum State {
+    INIT_STATE(""),
     INT_STATE("primitive: "),
     STRING_STATE("string: "),
     BYTE_STATE("primitive: "),
@@ -24,7 +24,7 @@ enum State
         return relevantTypeDescription;
     }
 
-     State (String relevantTypeDescription) {
+    State(String relevantTypeDescription) {
         this.relevantTypeDescription = relevantTypeDescription;
     }
 }
@@ -74,7 +74,7 @@ public class Logger {
         buffer = Integer.toString(sumOfIntegers);
     }
 
-    public static void endLogSession () {
+    public static void endLogSession() {
         flush();
         resetState();
     }
@@ -126,6 +126,7 @@ public class Logger {
         resetState();
     }
 
+
     public static void log(int[] message) {
         changeState(State.PRIMITIVE_ARRAY_STATE);
         buffer = arrayToString(message);
@@ -136,7 +137,7 @@ public class Logger {
 
     public static void log(int[][] message) {
         changeState(State.PRIMITIVES_MATRIX_ARRAY_STATE);
-        StringBuilder sb = new StringBuilder("{"+lineSeparator());
+        StringBuilder sb = new StringBuilder("{" + lineSeparator());
         for (int[] i : message) {
             sb.append(arrayToString(i)).append(lineSeparator());
         }
@@ -146,39 +147,44 @@ public class Logger {
         resetState();
     }
 
-    public static void log(int[][][] message){
+    public static void log(int[][][][] message) {
         changeState(State.PRIMITIVES_MULTIMATRIX_ARRAY_STATE);
-        StringBuilder sb = new StringBuilder("{"+lineSeparator());
+        StringBuilder sb = new StringBuilder("{" + lineSeparator());
+
+        for (int[][][] i : message) {
+            sb.append("{" + lineSeparator());
+            for (int[][] j : i) {
+                sb.append("{" + lineSeparator());
+                for (int[] k : j) {
+                    sb.append(arrayToString(k)).append(lineSeparator());
+                }
+                sb.append("}" + lineSeparator());
+            }
+            sb.append("}" + lineSeparator());
+        }
+
+        sb.append('}');
+        buffer = sb.toString();
+        flush();
+        resetState();
     }
 
     private static String arrayToString(int[] array) {
         return Arrays.stream(getStringArray(array))
-                     .collect(Collectors.joining(", ", "{", "}"));
+                .collect(Collectors.joining(", ", "{", "}"));
 
     }
 
     private static String[] getStringArray(int[] array) {
         return Arrays.stream(array)
-                       .mapToObj(String::valueOf)
-                       .toArray(String[]::new);
+                .mapToObj(String::valueOf)
+                .toArray(String[]::new);
     }
 
 
-    private static void printOut(String input){
+    private static void printOut(String input) {
         System.out.println(input);
     }
 
-    public static void main(String[] args) {
-        Logger.log(new int[][][][] {{{{0}}}});
-        Logger.endLogSession();
-
-        System.out.println(
-                "primitives multimatrix: {" + lineSeparator() +
-                        "{" + lineSeparator() + "{" +  lineSeparator() + "{" +  lineSeparator() +
-                        "0" +  lineSeparator() +
-                        "}" +  lineSeparator() +"}" +  lineSeparator() +"}" +  lineSeparator() +
-                        "}" +  lineSeparator()
-        );
-    }
 
 }
