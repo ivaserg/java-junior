@@ -6,29 +6,6 @@ import java.util.stream.Collectors;
 
 import static java.lang.System.lineSeparator;
 
-enum State {
-    INIT_STATE(""),
-    INT_STATE("primitive: "),
-    STRING_STATE("string: "),
-    BYTE_STATE("primitive: "),
-    CHAR_STATE("char: "),
-    BOOLEAN_STATE("primitive: "),
-    PRIMITIVE_ARRAY_STATE("primitives array: "),
-    PRIMITIVES_MATRIX_ARRAY_STATE("primitives matrix: "),
-    PRIMITIVES_MULTIMATRIX_ARRAY_STATE("primitives multimatrix: "),
-    OBJECT_STATE("reference: ");
-
-    private final String relevantTypeDescription;
-
-    String getRelevantTypeDescription() {
-        return relevantTypeDescription;
-    }
-
-    State(String relevantTypeDescription) {
-        this.relevantTypeDescription = relevantTypeDescription;
-    }
-}
-
 public class Logger {
     private static int sumOfIntegers;
     private static byte sumOfBytes;
@@ -130,7 +107,6 @@ public class Logger {
     public static void log(int[] message) {
         changeState(State.PRIMITIVE_ARRAY_STATE);
         buffer = arrayToString(message);
-
         flush();
         resetState();
     }
@@ -169,6 +145,32 @@ public class Logger {
         resetState();
     }
 
+    public static void log(String... args) {
+        changeState(State.VARARGS_STATE);
+        if (args.length == 0) return;
+        StringBuilder sb = new StringBuilder();
+        for (String s : args) {
+            sb.append(s).append(lineSeparator());
+        }
+        buffer = sb.toString();
+        flush();
+        resetState();
+
+    }
+
+    public static void log(Integer... args) {
+        changeState(State.VARARGS_STATE);
+        if (args.length == 0) return;
+        StringBuilder sb = new StringBuilder();
+        for (Integer i : args) {
+            sb.append(i).append(lineSeparator());
+        }
+        buffer = sb.toString();
+        flush();
+        resetState();
+
+    }
+
     private static String arrayToString(int[] array) {
         return Arrays.stream(getStringArray(array))
                 .collect(Collectors.joining(", ", "{", "}"));
@@ -186,5 +188,7 @@ public class Logger {
         System.out.println(input);
     }
 
+    public static void main(String[] args) {
 
+    }
 }
