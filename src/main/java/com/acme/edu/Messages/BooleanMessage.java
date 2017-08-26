@@ -11,11 +11,9 @@ public class BooleanMessage extends LogMessage {
 
     public BooleanMessage(String message, Saver saver, Formatter formatter) {
         super(message, saver, formatter);
+        super.setTypeDescription(TYPE_DESCRIPTION);
     }
 
-    public void addTypeDescription() {
-        super.setTypeDescription(TYPE_DESCRIPTION);
-        super.addTypeDescription();
-    }
+
 
 }

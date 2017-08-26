@@ -11,10 +11,8 @@ public class ByteMessage extends LogMessage {
 
     public ByteMessage(String message, Saver saver, Formatter formatter) {
         super(message, saver, formatter);
+        super.setTypeDescription(TYPE_DESCRIPTION);
     }
 
-    public void addTypeDescription() {
-        super.setTypeDescription(TYPE_DESCRIPTION);
-        super.addTypeDescription();
-    }
+
 }

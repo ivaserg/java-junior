@@ -11,9 +11,7 @@ public class StringMessage extends LogMessage {
 
     public StringMessage(String message, Saver saver, Formatter formatter) {
         super(message, saver, formatter);
-    }
-    public void addTypeDescription() {
         super.setTypeDescription(TYPE_DESCRIPTION);
-        super.addTypeDescription();
     }
+
 }

@@ -210,7 +210,7 @@ public class LoggerApp {
     }
 
     private void log(LogMessage message) {
-        message.addTypeDescription();
+        message.enrichWithTypeDescription();
         message.format();
         message.save();
     }
@@ -222,8 +222,12 @@ public class LoggerApp {
 
     public static void main(String[] args) {
         LoggerApp loggerApp = new LoggerApp();
-        loggerApp.log((boolean) true);
-        loggerApp.endLogSession();
+        ObjectMessage logMessage = new ObjectMessage("nww", loggerApp.saver, loggerApp.formatter);
+        logMessage.enrichWithTypeDescription();
+        System.out.println(logMessage.getMessage());
+
+
+
     }
 
 }

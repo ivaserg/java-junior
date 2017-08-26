@@ -15,23 +15,33 @@ public abstract class LogMessage {
         this.formatter=formatter;
     }
 
+    void setMessage(String message) {
+        this.message=message;
+    }
+
     public String getMessage() {
         return message;
     }
 
-    public void setTypeDescription(String typeDescription) {
+    void setTypeDescription(String typeDescription) {
         this.typeDescription = typeDescription;
     }
 
-    public void addTypeDescription() {
-        this.message = typeDescription + " " + this.message;
+    public String getTypeDescription() {
+        return typeDescription;
+    }
+
+    public void enrichWithTypeDescription() {
+        DescriptionEnricher.enrich(this);
+    }
+
+    public void format() {
+        formatter.format(message);
     }
 
     public void save() {
         saver.save(message);
     }
 
-    public void format() {
-        message = formatter.format(message);
-    }
+
 }
