@@ -1,12 +1,24 @@
 package com.acme.edu;
 
 
+import com.acme.edu.Formatters.DefaultFormatter;
+import com.acme.edu.Formatters.Formatter;
+import com.acme.edu.Messages.BooleanMessage;
+import com.acme.edu.Messages.CharMessage;
+import com.acme.edu.Messages.LogMessage;
+import com.acme.edu.Messages.ObjectMessage;
+import com.acme.edu.Savers.ConsoleSaver;
+import com.acme.edu.Savers.Saver;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static java.lang.System.lineSeparator;
 
 public class LoggerApp {
+    private Saver saver;
+    private Formatter formatter;
+
     private int sumOfIntegers;
     private byte sumOfBytes;
     private  String currentString = "";
@@ -14,6 +26,16 @@ public class LoggerApp {
     private  State currentState = State.INIT_STATE;
     private  String buffer = "";
 
+
+    public LoggerApp() {
+        this.saver=new ConsoleSaver();
+        this.formatter=new DefaultFormatter();
+    }
+
+    public LoggerApp(Saver saver, Formatter formatter) {
+        this.saver=saver;
+        this.formatter=formatter;
+    }
 
     private  void resetState() {
         sumOfIntegers = 0;
@@ -37,8 +59,6 @@ public class LoggerApp {
         printOut(currentState.getRelevantTypeDescription() + buffer);
         buffer = "";
     }
-
-
 
     public  void log(int message) {
         changeState(State.INT_STATE);
@@ -70,14 +90,12 @@ public class LoggerApp {
         buffer = Byte.toString(sumOfBytes);
     }
 
-
     public  void log(char message) {
         changeState(State.CHAR_STATE);
-        buffer = Character.toString(message);
-        flush();
+        LogMessage charMessage = new CharMessage(Character.toString(message), saver, formatter);
+        log(charMessage);
         resetState();
     }
-
 
     public  void log(String message) {
         if (message == null) return;
@@ -95,21 +113,18 @@ public class LoggerApp {
 
     public  void log(boolean message) {
         changeState(State.BOOLEAN_STATE);
-        buffer = Boolean.toString(message);
-        flush();
+        LogMessage booleanMessage = new BooleanMessage(Boolean.toString(message), saver, formatter);
+        log(booleanMessage);
         resetState();
     }
-
 
     public  void log(Object message) {
         if (message == null) return;
         changeState(State.OBJECT_STATE);
-        buffer = message.toString();
-        flush();
+        ObjectMessage objectMessage = new ObjectMessage(message.toString(), saver, formatter);
+        log(objectMessage);
         resetState();
     }
-
-
 
     public  void log(int[] message) {
         changeState(State.PRIMITIVE_ARRAY_STATE);
@@ -194,9 +209,21 @@ public class LoggerApp {
                 .toArray(String[]::new);
     }
 
+    private void log(LogMessage message) {
+        message.addTypeDescription();
+        message.format();
+        message.save();
+    }
+
 
     private void printOut(String input) {
         System.out.println(input);
+    }
+
+    public static void main(String[] args) {
+        LoggerApp loggerApp = new LoggerApp();
+        loggerApp.log((boolean) true);
+        loggerApp.endLogSession();
     }
 
 }
