@@ -32,7 +32,7 @@ public abstract class LogMessage {
     }
 
     public void enrichWithTypeDescription() {
-        DescriptionEnricher.enrich(this);
+        Enricher.enrichWithDescription(this);
     }
 
     public void format() {

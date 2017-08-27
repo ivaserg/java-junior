@@ -3,15 +3,11 @@ package com.acme.edu;
 
 import com.acme.edu.Formatters.DefaultFormatter;
 import com.acme.edu.Formatters.Formatter;
-import com.acme.edu.Messages.BooleanMessage;
-import com.acme.edu.Messages.CharMessage;
-import com.acme.edu.Messages.LogMessage;
-import com.acme.edu.Messages.ObjectMessage;
+import com.acme.edu.Messages.*;
 import com.acme.edu.Savers.ConsoleSaver;
 import com.acme.edu.Savers.Saver;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import static java.lang.System.lineSeparator;
 
@@ -92,8 +88,8 @@ public class LoggerApp {
 
     public  void log(char message) {
         changeState(State.CHAR_STATE);
-        LogMessage charMessage = new CharMessage(Character.toString(message), saver, formatter);
-        log(charMessage);
+        LogMessage logMessage = new CharMessage(Character.toString(message), saver, formatter);
+        log(logMessage);
         resetState();
     }
 
@@ -113,59 +109,42 @@ public class LoggerApp {
 
     public  void log(boolean message) {
         changeState(State.BOOLEAN_STATE);
-        LogMessage booleanMessage = new BooleanMessage(Boolean.toString(message), saver, formatter);
-        log(booleanMessage);
+        LogMessage logMessage = new BooleanMessage(Boolean.toString(message), saver, formatter);
+        log(logMessage);
         resetState();
     }
 
     public  void log(Object message) {
         if (message == null) return;
         changeState(State.OBJECT_STATE);
-        ObjectMessage objectMessage = new ObjectMessage(message.toString(), saver, formatter);
-        log(objectMessage);
+        LogMessage logMessage = new ObjectMessage(message.toString(), saver, formatter);
+        log(logMessage);
         resetState();
     }
 
     public  void log(int[] message) {
         changeState(State.PRIMITIVE_ARRAY_STATE);
-        buffer = arrayToString(message);
-        flush();
+        String enrichedMessage = Enricher.enrichOneDimensionalArray(message);
+        LogMessage logMessage = new ArrayMessage(enrichedMessage, saver, formatter);
+        log(logMessage);
         resetState();
     }
 
 
     public  void log(int[][] message) {
         changeState(State.PRIMITIVES_MATRIX_ARRAY_STATE);
-        StringBuilder sb = new StringBuilder("{" + lineSeparator());
-        for (int[] i : message) {
-            sb.append(arrayToString(i)).append(lineSeparator());
-        }
-        sb.append('}');
-        buffer = sb.toString();
-        flush();
+        String enrichedMessage = Enricher.enrichTwoDimensionalArray(message);
+        LogMessage logMessage = new TwoDimArrayMessage(enrichedMessage, saver, formatter);
+        log(logMessage);
         resetState();
     }
 
 
     public  void log(int[][][][] message) {
         changeState(State.PRIMITIVES_MULTIMATRIX_ARRAY_STATE);
-        StringBuilder sb = new StringBuilder("{" + lineSeparator());
-
-        for (int[][][] i : message) {
-            sb.append("{" + lineSeparator());
-            for (int[][] j : i) {
-                sb.append("{" + lineSeparator());
-                for (int[] k : j) {
-                    sb.append(arrayToString(k)).append(lineSeparator());
-                }
-                sb.append("}" + lineSeparator());
-            }
-            sb.append("}" + lineSeparator());
-        }
-
-        sb.append('}');
-        buffer = sb.toString();
-        flush();
+        String enrichedMessage = Enricher.enrichMultiDimensionalArray(message);
+        LogMessage logMessage = new MultiDimArrayMessage(enrichedMessage, saver, formatter);
+        log(logMessage);
         resetState();
     }
 
@@ -195,18 +174,6 @@ public class LoggerApp {
         flush();
         resetState();
 
-    }
-
-    private static String arrayToString(int[] array) {
-        return Arrays.stream(getStringArray(array))
-                .collect(Collectors.joining(", ", "{", "}"));
-
-    }
-
-    private static String[] getStringArray(int[] array) {
-        return Arrays.stream(array)
-                .mapToObj(String::valueOf)
-                .toArray(String[]::new);
     }
 
     private void log(LogMessage message) {
