@@ -1,6 +1,6 @@
 package com.acme.edu;
 
-enum State {
+enum LoggerState {
     NO_BUFFER_STATE,
     INT_BUFFER_STATE,
     BYTE_BUFFER_STATE,

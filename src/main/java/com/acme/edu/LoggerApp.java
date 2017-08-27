@@ -11,10 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoggerApp {
-
-    private State currentState = State.NO_BUFFER_STATE;
+    private LoggerState currentLoggerState = LoggerState.NO_BUFFER_STATE;
     private List<LogMessage> logMessageBuffer = new ArrayList<>();
-
 
     public LoggerApp() {
         LogMessage.saver = new ConsoleSaver();
@@ -26,16 +24,14 @@ public class LoggerApp {
         LogMessage.formatter = formatter;
     }
 
-
-
     private void resetState() {
-        currentState = State.NO_BUFFER_STATE;
+        currentLoggerState = LoggerState.NO_BUFFER_STATE;
     }
 
 
-    private void changeState(State newState) {
-        if (currentState != State.NO_BUFFER_STATE && currentState != newState) {
-            switch (currentState) {
+    private void changeState(LoggerState newLoggerState) {
+        if (currentLoggerState != LoggerState.NO_BUFFER_STATE && currentLoggerState != newLoggerState) {
+            switch (currentLoggerState) {
                 case INT_BUFFER_STATE:
                     flushIntegers();
                     break;
@@ -49,7 +45,7 @@ public class LoggerApp {
             }
             resetState();
         }
-        currentState = newState;
+        currentLoggerState = newLoggerState;
     }
 
     private void flushIntegers() {
@@ -111,7 +107,7 @@ public class LoggerApp {
     }
 
     public void endLogSession() {
-        switch (currentState) {
+        switch (currentLoggerState) {
             case INT_BUFFER_STATE:
                 flushIntegers();
                 break;
@@ -126,70 +122,70 @@ public class LoggerApp {
     }
 
     public void log(int message) {
-        changeState(State.INT_BUFFER_STATE);
+        changeState(LoggerState.INT_BUFFER_STATE);
         logMessageBuffer.add(new IntMessage(Integer.toString(message)));
     }
 
 
     public void log(byte message) {
-        changeState(State.BYTE_BUFFER_STATE);
+        changeState(LoggerState.BYTE_BUFFER_STATE);
         logMessageBuffer.add(new ByteMessage(Byte.toString(message)));
     }
 
     public void log(char message) {
-        changeState(State.NO_BUFFER_STATE);
+        changeState(LoggerState.NO_BUFFER_STATE);
         log(new CharMessage(Character.toString(message)));
         resetState();
     }
 
     public void log(String message) {
         if (message == null) return;
-        changeState(State.STRING_BUFFER_STATE);
+        changeState(LoggerState.STRING_BUFFER_STATE);
         logMessageBuffer.add(new StringMessage(message));
     }
 
 
     public void log(boolean message) {
-        changeState(State.NO_BUFFER_STATE);
+        changeState(LoggerState.NO_BUFFER_STATE);
         log(new BooleanMessage(Boolean.toString(message)));
         resetState();
     }
 
     public void log(Object message) {
         if (message == null) return;
-        changeState(State.NO_BUFFER_STATE);
+        changeState(LoggerState.NO_BUFFER_STATE);
         log(new ObjectMessage(message.toString()));
         resetState();
     }
 
     public void log(int[] message) {
-        changeState(State.NO_BUFFER_STATE);
-        String enrichedMessage = Enricher.enrichOneDimensionalArray(message);
+        changeState(LoggerState.NO_BUFFER_STATE);
+        String enrichedMessage = EnrichmentUtils.enrichOneDimensionalArray(message);
         log(new ArrayMessage(enrichedMessage));
         resetState();
     }
 
 
     public void log(int[][] message) {
-        changeState(State.NO_BUFFER_STATE);
-        String enrichedMessage = Enricher.enrichTwoDimensionalArray(message);
+        changeState(LoggerState.NO_BUFFER_STATE);
+        String enrichedMessage = EnrichmentUtils.enrichTwoDimensionalArray(message);
         log(new TwoDimArrayMessage(enrichedMessage));
         resetState();
     }
 
 
     public void log(int[][][][] message) {
-        changeState(State.NO_BUFFER_STATE);
-        String enrichedMessage = Enricher.enrichMultiDimensionalArray(message);
+        changeState(LoggerState.NO_BUFFER_STATE);
+        String enrichedMessage = EnrichmentUtils.enrichMultiDimensionalArray(message);
         log(new MultiDimArrayMessage(enrichedMessage));
         resetState();
     }
 
 
     public  void log(Object... varArgsArray) {
-        changeState(State.NO_BUFFER_STATE);
+        changeState(LoggerState.NO_BUFFER_STATE);
         if (varArgsArray.length == 0) return;
-        String enrichedMessage = Enricher.enrichObjectArray(varArgsArray);
+        String enrichedMessage = EnrichmentUtils.enrichObjectArray(varArgsArray);
         log(new VarArgsMessage(enrichedMessage));
         resetState();
     }

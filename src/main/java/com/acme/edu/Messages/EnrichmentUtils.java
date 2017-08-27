@@ -1,8 +1,5 @@
 package com.acme.edu.Messages;
 
-import com.acme.edu.LoggerApp;
-import com.acme.edu.Messages.LogMessage;
-
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -11,9 +8,9 @@ import static java.lang.System.lineSeparator;
 /**
  * Created by vanbkin on 27.08.2017.
  */
-public class Enricher {
+public class EnrichmentUtils {
 
-    public static void enrichWithDescription(LogMessage message) {
+    public static void enrichMessageWithDescription(LogMessage message) {
          message.setMessage(message.getTypeDescription() + message.getMessage());
     }
 
@@ -47,7 +44,7 @@ public class Enricher {
             for (int[][] j : i) {
                 sb.append("{" + lineSeparator());
                 for (int[] k : j) {
-                    sb.append(Enricher.arrayToString(k)).append(lineSeparator());
+                    sb.append(EnrichmentUtils.arrayToString(k)).append(lineSeparator());
                 }
                 sb.append("}" + lineSeparator());
             }
