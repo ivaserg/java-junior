@@ -7,174 +7,210 @@ import com.acme.edu.Messages.*;
 import com.acme.edu.Savers.ConsoleSaver;
 import com.acme.edu.Savers.Saver;
 
-import java.util.Arrays;
-
-import static java.lang.System.lineSeparator;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoggerApp {
-    private Saver saver;
-    private Formatter formatter;
 
-    private int sumOfIntegers;
-    private byte sumOfBytes;
-    private  String currentString = "";
-    private  int counter;
-    private  State currentState = State.INIT_STATE;
-    private  String buffer = "";
+    private State currentState = State.NO_BUFFER_STATE;
+    private List<LogMessage> logMessageBuffer = new ArrayList<>();
 
 
     public LoggerApp() {
-        this.saver=new ConsoleSaver();
-        this.formatter=new DefaultFormatter();
+        LogMessage.saver = new ConsoleSaver();
+        LogMessage.formatter =  new DefaultFormatter();
     }
 
     public LoggerApp(Saver saver, Formatter formatter) {
-        this.saver=saver;
-        this.formatter=formatter;
-    }
-
-    private  void resetState() {
-        sumOfIntegers = 0;
-        sumOfBytes = 0;
-        currentString = "";
-        counter = 0;
-        buffer = "";
-        currentState = State.INIT_STATE;
+        LogMessage.saver = saver;
+        LogMessage.formatter = formatter;
     }
 
 
-    private  void changeState(State newState) {
-        if (currentState != State.INIT_STATE && currentState != newState) {
-            flush();
+
+    private void resetState() {
+        currentState = State.NO_BUFFER_STATE;
+    }
+
+
+    private void changeState(State newState) {
+        if (currentState != State.NO_BUFFER_STATE && currentState != newState) {
+            switch (currentState) {
+                case INT_BUFFER_STATE:
+                    flushIntegers();
+                    break;
+                case BYTE_BUFFER_STATE:
+                    flushBytes();
+                    break;
+                case STRING_BUFFER_STATE:
+                    flushStrings();
+                    break;
+
+            }
             resetState();
         }
         currentState = newState;
     }
 
-    private  void flush() {
-        printOut(currentState.getRelevantTypeDescription() + buffer);
-        buffer = "";
-    }
+    private void flushIntegers() {
+        if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
+        int aggregateValue = 0;
+        for (LogMessage logMessage : logMessageBuffer) {
+            int currentValue = Integer.valueOf(logMessage.getMessage());
+            if (Integer.MAX_VALUE - aggregateValue < currentValue) {  // overFlow
+                log(new IntMessage(String.valueOf(aggregateValue)));
+                aggregateValue = currentValue;
+            } else {
+                aggregateValue += currentValue;
+            }
 
-    public  void log(int message) {
-        changeState(State.INT_STATE);
-        boolean isOverflow = Integer.MAX_VALUE - sumOfIntegers < message;
-        if (isOverflow) {
-            flush();
-            sumOfIntegers = Integer.MAX_VALUE;
-        } else {
-            sumOfIntegers += message;
         }
-        buffer = Integer.toString(sumOfIntegers);
+        log(new IntMessage(String.valueOf(aggregateValue)));
+        logMessageBuffer.clear();
     }
 
-    public  void endLogSession() {
-        flush();
-        resetState();
-    }
+    private void flushBytes() {
+        if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
+        int aggregateValue = 0;
+        for (LogMessage logMessage : logMessageBuffer) {
+            int currentValue = Byte.valueOf(logMessage.getMessage());
+            if (Byte.MAX_VALUE - aggregateValue < currentValue) {  // overFlow
+                log(new ByteMessage(String.valueOf(aggregateValue)));
+                aggregateValue = currentValue;
+            } else {
+                aggregateValue += currentValue;
+            }
 
-
-    public  void log(byte message) {
-        changeState(State.BYTE_STATE);
-        boolean overflow = Byte.MAX_VALUE - sumOfBytes < message;
-        if (overflow) {
-            flush();
-            sumOfBytes = Byte.MAX_VALUE;
-        } else {
-            sumOfBytes += message;
         }
-        buffer = Byte.toString(sumOfBytes);
+        log(new ByteMessage(String.valueOf(aggregateValue)));
+        logMessageBuffer.clear();
     }
 
-    public  void log(char message) {
-        changeState(State.CHAR_STATE);
-        LogMessage logMessage = new CharMessage(Character.toString(message), saver, formatter);
-        log(logMessage);
-        resetState();
-    }
+    private void flushStrings() {
+        if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
+        String currentString = "";
+        String previousString = logMessageBuffer.get(0).getMessage();
+        int counter = 0;
+        for (LogMessage logMessage : logMessageBuffer) {
+            currentString = logMessage.getMessage();
+            if (!currentString.equals(previousString)) {
+                String numberOfStrings = counter > 1 ? " (x" + counter + ")" : "";
+                log(new StringMessage(previousString + numberOfStrings));
+                counter = 1;
+                previousString = currentString;
+            } else {
+                counter++;
+            }
 
-    public  void log(String message) {
-        if (message == null) return;
-        changeState(State.STRING_STATE);
-        if (!currentString.isEmpty() && !currentString.equals(message)) {
-            flush();
-            counter = 0;
         }
-        counter++;
-        currentString = message;
         String numberOfStrings = counter > 1 ? " (x" + counter + ")" : "";
-        buffer = currentString + numberOfStrings;
+        log(new StringMessage(currentString + numberOfStrings));
+
+        logMessageBuffer.clear();
+
     }
 
-
-    public  void log(boolean message) {
-        changeState(State.BOOLEAN_STATE);
-        LogMessage logMessage = new BooleanMessage(Boolean.toString(message), saver, formatter);
-        log(logMessage);
+    public void endLogSession() {
+        switch (currentState) {
+            case INT_BUFFER_STATE:
+                flushIntegers();
+                break;
+            case BYTE_BUFFER_STATE:
+                flushBytes();
+                break;
+            case STRING_BUFFER_STATE:
+                flushStrings();
+                break;
+        }
         resetState();
     }
 
-    public  void log(Object message) {
+    public void log(int message) {
+        changeState(State.INT_BUFFER_STATE);
+        logMessageBuffer.add(new IntMessage(Integer.toString(message)));
+    }
+
+
+    public void log(byte message) {
+        changeState(State.BYTE_BUFFER_STATE);
+        logMessageBuffer.add(new ByteMessage(Byte.toString(message)));
+    }
+
+    public void log(char message) {
+        changeState(State.NO_BUFFER_STATE);
+        log(new CharMessage(Character.toString(message)));
+        resetState();
+    }
+
+    public void log(String message) {
         if (message == null) return;
-        changeState(State.OBJECT_STATE);
-        LogMessage logMessage = new ObjectMessage(message.toString(), saver, formatter);
-        log(logMessage);
+        changeState(State.STRING_BUFFER_STATE);
+        logMessageBuffer.add(new StringMessage(message));
+    }
+
+
+    public void log(boolean message) {
+        changeState(State.NO_BUFFER_STATE);
+        log(new BooleanMessage(Boolean.toString(message)));
         resetState();
     }
 
-    public  void log(int[] message) {
-        changeState(State.PRIMITIVE_ARRAY_STATE);
+    public void log(Object message) {
+        if (message == null) return;
+        changeState(State.NO_BUFFER_STATE);
+        log(new ObjectMessage(message.toString()));
+        resetState();
+    }
+
+    public void log(int[] message) {
+        changeState(State.NO_BUFFER_STATE);
         String enrichedMessage = Enricher.enrichOneDimensionalArray(message);
-        LogMessage logMessage = new ArrayMessage(enrichedMessage, saver, formatter);
-        log(logMessage);
+        log(new ArrayMessage(enrichedMessage));
         resetState();
     }
 
 
-    public  void log(int[][] message) {
-        changeState(State.PRIMITIVES_MATRIX_ARRAY_STATE);
+    public void log(int[][] message) {
+        changeState(State.NO_BUFFER_STATE);
         String enrichedMessage = Enricher.enrichTwoDimensionalArray(message);
-        LogMessage logMessage = new TwoDimArrayMessage(enrichedMessage, saver, formatter);
-        log(logMessage);
+        log(new TwoDimArrayMessage(enrichedMessage));
         resetState();
     }
 
 
-    public  void log(int[][][][] message) {
-        changeState(State.PRIMITIVES_MULTIMATRIX_ARRAY_STATE);
+    public void log(int[][][][] message) {
+        changeState(State.NO_BUFFER_STATE);
         String enrichedMessage = Enricher.enrichMultiDimensionalArray(message);
-        LogMessage logMessage = new MultiDimArrayMessage(enrichedMessage, saver, formatter);
-        log(logMessage);
+        log(new MultiDimArrayMessage(enrichedMessage));
         resetState();
     }
 
 
-    public  void log(String... args) {
-        changeState(State.VARARGS_STATE);
-        if (args.length == 0) return;
-        StringBuilder sb = new StringBuilder();
-        for (String s : args) {
-            sb.append(s).append(lineSeparator());
-        }
-        buffer = sb.toString();
-        flush();
-        resetState();
-
-    }
-
-
-    public  void log(Integer... args) {
-        changeState(State.VARARGS_STATE);
-        if (args.length == 0) return;
-        StringBuilder sb = new StringBuilder();
-        for (Integer i : args) {
-            sb.append(i).append(lineSeparator());
-        }
-        buffer = sb.toString();
-        flush();
-        resetState();
-
-    }
+//    public  void log(String... args) {
+//        changeState(State.VARARGS_STATE);
+//        if (args.length == 0) return;
+//        StringBuilder sb = new StringBuilder();
+//        for (String s : args) {
+//            sb.append(s).append(lineSeparator());
+//        }
+//        buffer = sb.toString();
+//        flushIntegers();
+//        resetState();
+//    }
+//
+//
+//    public  void log(Integer... args) {
+//        changeState(State.VARARGS_STATE);
+//        if (args.length == 0) return;
+//        StringBuilder sb = new StringBuilder();
+//        for (Integer i : args) {
+//            sb.append(i).append(lineSeparator());
+//        }
+//        buffer = sb.toString();
+//        flushIntegers();
+//        resetState();
+//
+//    }
 
     private void log(LogMessage message) {
         message.enrichWithTypeDescription();
@@ -182,19 +218,5 @@ public class LoggerApp {
         message.save();
     }
 
-
-    private void printOut(String input) {
-        System.out.println(input);
-    }
-
-    public static void main(String[] args) {
-        LoggerApp loggerApp = new LoggerApp();
-        ObjectMessage logMessage = new ObjectMessage("nww", loggerApp.saver, loggerApp.formatter);
-        logMessage.enrichWithTypeDescription();
-        System.out.println(logMessage.getMessage());
-
-
-
-    }
 
 }

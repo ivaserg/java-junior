@@ -9,8 +9,8 @@ import com.acme.edu.Savers.Saver;
 public class TwoDimArrayMessage extends LogMessage {
     private static final String TYPE_DESCRIPTION = "primitives matrix: ";
 
-    public TwoDimArrayMessage(String message, Saver saver, Formatter formatter) {
-        super(message, saver, formatter);
+    public TwoDimArrayMessage(String message) {
+        super(message);
         super.setTypeDescription(TYPE_DESCRIPTION);
     }
 }

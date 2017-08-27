@@ -4,15 +4,16 @@ import com.acme.edu.Formatters.Formatter;
 import com.acme.edu.Savers.Saver;
 
 public abstract class LogMessage {
+    public static Formatter formatter;
+    public static Saver saver;
+
     private String typeDescription;
-    private Saver saver;
-    private Formatter formatter;
     private String message;
 
-    public LogMessage(String message, Saver saver, Formatter formatter) {
+
+
+    public LogMessage(String message) {
         this.message = message;
-        this.saver = saver;
-        this.formatter=formatter;
     }
 
     void setMessage(String message) {

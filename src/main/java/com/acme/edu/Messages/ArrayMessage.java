@@ -9,8 +9,8 @@ import com.acme.edu.Savers.Saver;
 public class ArrayMessage extends LogMessage {
     private static final String TYPE_DESCRIPTION = "primitives array: ";
 
-    public ArrayMessage(String message, Saver saver, Formatter formatter) {
-        super(message, saver, formatter);
+    public ArrayMessage(String message) {
+        super(message);
         super.setTypeDescription(TYPE_DESCRIPTION);
     }
 }

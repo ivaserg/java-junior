@@ -9,8 +9,8 @@ import com.acme.edu.Savers.Saver;
 public class StringMessage extends LogMessage {
     private static final String TYPE_DESCRIPTION = "string: ";
 
-    public StringMessage(String message, Saver saver, Formatter formatter) {
-        super(message, saver, formatter);
+    public StringMessage(String message) {
+        super(message);
         super.setTypeDescription(TYPE_DESCRIPTION);
     }
 

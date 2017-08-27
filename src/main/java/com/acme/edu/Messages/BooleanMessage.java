@@ -9,8 +9,8 @@ import com.acme.edu.Savers.Saver;
 public class BooleanMessage extends LogMessage {
     private static final String TYPE_DESCRIPTION = "primitive: ";
 
-    public BooleanMessage(String message, Saver saver, Formatter formatter) {
-        super(message, saver, formatter);
+    public BooleanMessage(String message) {
+        super(message);
         super.setTypeDescription(TYPE_DESCRIPTION);
     }
 

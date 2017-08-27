@@ -9,9 +9,9 @@ import com.acme.edu.Savers.Saver;
 public class IntMessage extends LogMessage {
     private static final String TYPE_DESCRIPTION = "primitive: ";
 
-    public IntMessage(String message, Saver saver, Formatter formatter) {
+    public IntMessage(String message) {
 
-        super(message, saver, formatter);
+        super(message);
         super.setTypeDescription(TYPE_DESCRIPTION);
     }
 

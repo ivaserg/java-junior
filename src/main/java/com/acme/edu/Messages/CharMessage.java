@@ -9,9 +9,9 @@ import com.acme.edu.Savers.Saver;
 public class CharMessage extends LogMessage {
     private static final String TYPE_DESCRIPTION = "char: ";
 
-    public CharMessage(String message, Saver saver, Formatter formatter) {
+    public CharMessage(String message) {
 
-        super(message, saver, formatter);
+        super(message);
         super.setTypeDescription(TYPE_DESCRIPTION);
     }
 
