@@ -186,31 +186,13 @@ public class LoggerApp {
     }
 
 
-//    public  void log(String... args) {
-//        changeState(State.VARARGS_STATE);
-//        if (args.length == 0) return;
-//        StringBuilder sb = new StringBuilder();
-//        for (String s : args) {
-//            sb.append(s).append(lineSeparator());
-//        }
-//        buffer = sb.toString();
-//        flushIntegers();
-//        resetState();
-//    }
-//
-//
-//    public  void log(Integer... args) {
-//        changeState(State.VARARGS_STATE);
-//        if (args.length == 0) return;
-//        StringBuilder sb = new StringBuilder();
-//        for (Integer i : args) {
-//            sb.append(i).append(lineSeparator());
-//        }
-//        buffer = sb.toString();
-//        flushIntegers();
-//        resetState();
-//
-//    }
+    public  void log(Object... varArgsArray) {
+        changeState(State.NO_BUFFER_STATE);
+        if (varArgsArray.length == 0) return;
+        String enrichedMessage = Enricher.enrichObjectArray(varArgsArray);
+        log(new VarArgsMessage(enrichedMessage));
+        resetState();
+    }
 
     private void log(LogMessage message) {
         message.enrichWithTypeDescription();

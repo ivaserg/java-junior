@@ -17,9 +17,17 @@ public class Enricher {
          message.setMessage(message.getTypeDescription() + message.getMessage());
     }
 
+    public static String enrichObjectArray(Object[] array) {
+        StringBuilder sb  = new StringBuilder();
+        for (Object o : array) {
+            sb.append(o.toString()).append(lineSeparator());
+        }
+        return sb.toString();
+
+    }
+
     public static String enrichOneDimensionalArray(int[] array) {
         return arrayToString(array);
-
     }
 
     public static String enrichTwoDimensionalArray(int[][] array) {
@@ -50,7 +58,7 @@ public class Enricher {
         return sb.toString();
     }
 
-    public static String arrayToString(int[] array) {
+    private static String arrayToString(int[] array) {
         return Arrays.stream(Arrays.stream(array)
                 .mapToObj(String::valueOf)
                 .toArray(String[]::new))
@@ -58,9 +66,4 @@ public class Enricher {
 
     }
 
-//    private static String[] getStringArray(int[] array) {
-//        return Arrays.stream(array)
-//                .mapToObj(String::valueOf)
-//                .toArray(String[]::new);
-//    }
 }
