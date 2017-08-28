@@ -10,12 +10,28 @@ import java.util.List;
 
 public class AggregationLogBuffer implements LogBuffer {
     private List<LogMessage> logMessageBuffer = new ArrayList<>();
+    private LogBufferState logBufferState = LogBufferState.INIT_STATE;
 
     @Override
     public void addMessage(LogMessage logMessage) {
-        if (logMessage == null) return;
+        switchLogBufferState(logMessage);
         logMessageBuffer.add(logMessage);
     }
+
+    public void switchLogBufferState(LogMessage logMessage) {
+        if (logMessage == null) return;
+        if (logMessage instanceof StringMessage || logMessage instanceof IntMessage || logMessage instanceof ByteMessage) {
+            setLogBufferState(LogBufferState.NEED_BUFFER_STATE);
+        }
+        else {
+            setLogBufferState(LogBufferState.NO_BUFFER_STATE);
+        }
+    }
+
+    public void setLogBufferState(LogBufferState logBufferState) {
+        this.logBufferState=logBufferState;
+    }
+
 
     public void flushIntegersWithAggregation() {
         if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
@@ -73,7 +89,6 @@ public class AggregationLogBuffer implements LogBuffer {
             } else {
                 counter++;
             }
-
         }
         String numberOfStrings = counter > 1 ? " (x" + counter + ")" : "";
         log(new StringMessage(currentString + numberOfStrings));
@@ -81,7 +96,6 @@ public class AggregationLogBuffer implements LogBuffer {
         logMessageBuffer.clear();
 
     }
-
 
 
     @Override

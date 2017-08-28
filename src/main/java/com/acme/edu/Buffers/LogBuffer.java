@@ -6,4 +6,7 @@ public interface LogBuffer {
     void addMessage(LogMessage logMessage);
 
     void flushBuffer();
+
+    void setLogBufferState(LogBufferState logBufferState);
+
 }
