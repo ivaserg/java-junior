@@ -66,6 +66,26 @@ public class LoggerTest implements SysoutCaptureAndAssertionAbility {
     }
 
     @Test
+    public void shouldLogCorrectlyIntegerNegativeOverflowWhenSequentIntegers() {
+        //region when
+        Logger.log("str 1");
+        Logger.log(-10);
+        Logger.log(Integer.MIN_VALUE);
+        Logger.log("str 2");
+        Logger.log(0);
+        Logger.endLogSession();
+        //endregion
+
+        //region then
+        assertSysoutContains("str 1" + System.lineSeparator());
+        assertSysoutContains("-10" + System.lineSeparator());
+        assertSysoutContains(Integer.MIN_VALUE + System.lineSeparator());
+        assertSysoutContains("str 2" + System.lineSeparator());
+        assertSysoutContains("0" + System.lineSeparator());
+        //endregion
+    }
+
+    @Test
     public void shouldLogCorrectlyByteOverflowWhenSequentBytes() {
         //region when
         Logger.log("str 1");
@@ -80,6 +100,26 @@ public class LoggerTest implements SysoutCaptureAndAssertionAbility {
         assertSysoutContains("str 1" + System.lineSeparator());
         assertSysoutContains("10" + System.lineSeparator());
         assertSysoutContains(Byte.MAX_VALUE + System.lineSeparator());
+        assertSysoutContains("str 2" + System.lineSeparator());
+        assertSysoutContains("0" + System.lineSeparator());
+        //endregion
+    }
+
+    @Test
+    public void shouldLogCorrectlyByteNegativeOverflowWhenSequentBytes() {
+        //region when
+        Logger.log("str 1");
+        Logger.log((byte)-10);
+        Logger.log((byte)Byte.MIN_VALUE);
+        Logger.log("str 2");
+        Logger.log(0);
+        Logger.endLogSession();
+        //endregion
+
+        //region then
+        assertSysoutContains("str 1" + System.lineSeparator());
+        assertSysoutContains("-10" + System.lineSeparator());
+        assertSysoutContains(Byte.MIN_VALUE + System.lineSeparator());
         assertSysoutContains("str 2" + System.lineSeparator());
         assertSysoutContains("0" + System.lineSeparator());
         //endregion

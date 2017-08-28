@@ -8,8 +8,7 @@ import static java.lang.System.lineSeparator;
 /**
  * Created by vanbkin on 27.08.2017.
  */
-public class EnrichmentUtils {
-
+public abstract class EnrichmentUtils {
 
     public static String enrichObjectArray(Object[] array) {
         StringBuilder sb  = new StringBuilder();

@@ -45,6 +45,9 @@ public class LoggerApp {
             if (Integer.MAX_VALUE - aggregateValue < currentValue) {  // overFlow
                 log(new IntMessage(String.valueOf(aggregateValue)));
                 aggregateValue = currentValue;
+            } else if (Integer.MIN_VALUE + aggregateValue > currentValue){
+                log(new IntMessage(String.valueOf(aggregateValue)));
+                aggregateValue = currentValue;
             } else {
                 aggregateValue += currentValue;
             }
@@ -62,7 +65,11 @@ public class LoggerApp {
             if (Byte.MAX_VALUE - aggregateValue < currentValue) {  // overFlow
                 log(new ByteMessage(String.valueOf(aggregateValue)));
                 aggregateValue = currentValue;
-            } else {
+            } else if (Byte.MIN_VALUE + currentValue < Byte.MIN_VALUE){
+                log(new ByteMessage(String.valueOf(aggregateValue)));
+                aggregateValue = currentValue;
+            }
+            else {
                 aggregateValue += currentValue;
             }
 
@@ -187,6 +194,19 @@ public class LoggerApp {
         message.enrichWithTypeDescription();
         message.format();
         message.save();
+    }
+
+    public static void main(String[] args) {
+
+        System.out.println(Byte.MIN_VALUE);
+        Logger.log("str 1");
+        Logger.log((byte)-10);
+        Logger.log((byte)Byte.MIN_VALUE);
+        Logger.log("str 2");
+        Logger.log(0);
+        Logger.endLogSession();
+
+        System.out.println(Byte.MIN_VALUE - 10);
     }
 
 
