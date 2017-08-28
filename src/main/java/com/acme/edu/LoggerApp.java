@@ -31,18 +31,7 @@ public class LoggerApp {
 
     private void changeState(LoggerState newLoggerState) {
         if (currentLoggerState != LoggerState.NO_BUFFER_STATE && currentLoggerState != newLoggerState) {
-            switch (currentLoggerState) {
-                case INT_BUFFER_STATE:
-                    flushIntegers();
-                    break;
-                case BYTE_BUFFER_STATE:
-                    flushBytes();
-                    break;
-                case STRING_BUFFER_STATE:
-                    flushStrings();
-                    break;
-
-            }
+            flushMessages();
             resetState();
         }
         currentLoggerState = newLoggerState;
@@ -107,6 +96,11 @@ public class LoggerApp {
     }
 
     public void endLogSession() {
+        flushMessages();
+        resetState();
+    }
+
+    private void flushMessages() {
         switch (currentLoggerState) {
             case INT_BUFFER_STATE:
                 flushIntegers();
@@ -118,7 +112,6 @@ public class LoggerApp {
                 flushStrings();
                 break;
         }
-        resetState();
     }
 
     public void log(int message) {
