@@ -7,6 +7,5 @@ public interface LogBuffer {
 
     void flushBuffer();
 
-    void setLogBufferState(LogBufferState logBufferState);
 
 }

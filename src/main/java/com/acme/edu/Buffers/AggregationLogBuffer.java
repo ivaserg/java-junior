@@ -10,30 +10,40 @@ import java.util.List;
 
 public class AggregationLogBuffer implements LogBuffer {
     private List<LogMessage> logMessageBuffer = new ArrayList<>();
-    private LogBufferState logBufferState = LogBufferState.INIT_STATE;
+    private LogBufferState logBufferState = LogBufferState.NO_BUFFER_STATE;
+    private boolean stateSwitched = false;
 
     @Override
     public void addMessage(LogMessage logMessage) {
         switchLogBufferState(logMessage);
+        if (stateSwitched) flushBuffer();
         logMessageBuffer.add(logMessage);
+        if (logBufferState == LogBufferState.NO_BUFFER_STATE) flushBuffer();
+        stateSwitched = false;
     }
 
-    public void switchLogBufferState(LogMessage logMessage) {
+    private void switchLogBufferState(LogMessage logMessage) {
         if (logMessage == null) return;
-        if (logMessage instanceof StringMessage || logMessage instanceof IntMessage || logMessage instanceof ByteMessage) {
-            setLogBufferState(LogBufferState.NEED_BUFFER_STATE);
-        }
-        else {
+        LogBufferState previousLogBufferState = logBufferState;
+        if (logMessage instanceof StringMessage) {
+            setLogBufferState(LogBufferState.STRING_NEED_BUFFER_STATE);
+        } else if (logMessage instanceof IntMessage) {
+            setLogBufferState(LogBufferState.INT_NEED_BUFFER_STATE);
+        } else if (logMessage instanceof ByteMessage) {
+            setLogBufferState(LogBufferState.BYTE_NEED_BUFFER_STATE);
+        } else {
             setLogBufferState(LogBufferState.NO_BUFFER_STATE);
         }
-    }
-
-    public void setLogBufferState(LogBufferState logBufferState) {
-        this.logBufferState=logBufferState;
+        stateSwitched = previousLogBufferState != logBufferState;
     }
 
 
-    public void flushIntegersWithAggregation() {
+    private void setLogBufferState(LogBufferState logBufferState) {
+        this.logBufferState = logBufferState;
+    }
+
+
+    private void flushIntegersWithAggregation() {
         if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
         int aggregateValue = 0;
         for (LogMessage logMessage : logMessageBuffer) {
@@ -41,7 +51,7 @@ public class AggregationLogBuffer implements LogBuffer {
             if (Integer.MAX_VALUE - aggregateValue < currentValue) {  // overFlow
                 log(new IntMessage(String.valueOf(aggregateValue)));
                 aggregateValue = currentValue;
-            } else if (Integer.MIN_VALUE + aggregateValue > currentValue){
+            } else if (Integer.MIN_VALUE + aggregateValue > currentValue) {
                 log(new IntMessage(String.valueOf(aggregateValue)));
                 aggregateValue = currentValue;
             } else {
@@ -53,7 +63,7 @@ public class AggregationLogBuffer implements LogBuffer {
         logMessageBuffer.clear();
     }
 
-    public void flushBytesWithAggregation() {
+    private void flushBytesWithAggregation() {
         if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
         int aggregateValue = 0;
         for (LogMessage logMessage : logMessageBuffer) {
@@ -61,11 +71,10 @@ public class AggregationLogBuffer implements LogBuffer {
             if (Byte.MAX_VALUE - aggregateValue < currentValue) {  // overFlow
                 log(new ByteMessage(String.valueOf(aggregateValue)));
                 aggregateValue = currentValue;
-            } else if (aggregateValue + currentValue < Byte.MIN_VALUE){
+            } else if (aggregateValue + currentValue < Byte.MIN_VALUE) {
                 log(new ByteMessage(String.valueOf(aggregateValue)));
                 aggregateValue = currentValue;
-            }
-            else {
+            } else {
                 aggregateValue += currentValue;
             }
 
@@ -74,7 +83,7 @@ public class AggregationLogBuffer implements LogBuffer {
         logMessageBuffer.clear();
     }
 
-    public void flushStringsWithAggregation() {
+    private void flushStringsWithAggregation() {
         if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
         String currentString = "";
         String previousString = logMessageBuffer.get(0).getMessage();
@@ -100,7 +109,7 @@ public class AggregationLogBuffer implements LogBuffer {
 
     @Override
     public void flushBuffer() {
-        if (logMessageBuffer==null || logMessageBuffer.size()==0) return;
+        if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
         if (logMessageBuffer.get(0) instanceof StringMessage) {
             flushStringsWithAggregation();
         } else if (logMessageBuffer.get(0) instanceof IntMessage) {
@@ -108,7 +117,7 @@ public class AggregationLogBuffer implements LogBuffer {
         } else if (logMessageBuffer.get(0) instanceof ByteMessage) {
             flushBytesWithAggregation();
         } else {
-            for (LogMessage logMessage: logMessageBuffer) {
+            for (LogMessage logMessage : logMessageBuffer) {
                 log(logMessage);
             }
         }

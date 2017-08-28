@@ -1,7 +1,8 @@
 package com.acme.edu.Buffers;
 
 public enum LogBufferState {
-    INIT_STATE,
     NO_BUFFER_STATE,
-    NEED_BUFFER_STATE
+    STRING_NEED_BUFFER_STATE,
+    INT_NEED_BUFFER_STATE,
+    BYTE_NEED_BUFFER_STATE
 }
