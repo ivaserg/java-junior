@@ -1,6 +1,8 @@
 package com.acme.edu;
 
 
+import com.acme.edu.Buffers.AggregationLogBuffer;
+import com.acme.edu.Buffers.LogBuffer;
 import com.acme.edu.Formatters.DefaultFormatter;
 import com.acme.edu.Formatters.Formatter;
 import com.acme.edu.Messages.*;
@@ -9,17 +11,19 @@ import com.acme.edu.Savers.Saver;
 
 public class LoggerApp {
     private LoggerState currentLoggerState = LoggerState.NO_BUFFER_STATE;
-    private LogBuffer logBuffer = new LogBuffer();
+    private LogBuffer logBuffer;
 
 
     public LoggerApp() {
+        logBuffer = new AggregationLogBuffer();
         LogMessage.saver = new ConsoleSaver();
         LogMessage.formatter =  new DefaultFormatter();
     }
 
-    public LoggerApp(Saver saver, Formatter formatter) {
+    public LoggerApp(Saver saver, Formatter formatter, LogBuffer logBuffer) {
         LogMessage.saver = saver;
         LogMessage.formatter = formatter;
+        this.logBuffer = logBuffer;
     }
 
     private void resetState() {
@@ -29,32 +33,15 @@ public class LoggerApp {
 
     private void changeState(LoggerState newLoggerState) {
         if (currentLoggerState != LoggerState.NO_BUFFER_STATE && currentLoggerState != newLoggerState) {
-            logBufferedMessages(currentLoggerState);
+            logBuffer.flushBuffer();
             resetState();
         }
         currentLoggerState = newLoggerState;
     }
 
-    public void logBufferedMessages(LoggerState state) {
-        switch (state) {
-            case INT_BUFFER_STATE:
-                logBuffer.flushIntegers();
-                break;
-            case BYTE_BUFFER_STATE:
-                logBuffer.flushBytes();
-                break;
-            case STRING_BUFFER_STATE:
-                logBuffer.flushStrings();
-                break;
-            case NO_BUFFER_STATE:
-                logBuffer.flushBuffer();
-                break;
-        }
-    }
-
 
     public void endLogSession() {
-        logBufferedMessages(currentLoggerState);
+        logBuffer.flushBuffer();
         resetState();
     }
 
@@ -129,15 +116,6 @@ public class LoggerApp {
         resetState();
     }
 
-
-
-    public static void main(String[] args) {
-        System.out.println(Byte.MIN_VALUE+(-1));
-        Logger.log((byte)1);
-        Logger.log((byte)0);
-        Logger.log((byte)-1);
-        Logger.endLogSession();
-    }
 
 
 }

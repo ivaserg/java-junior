@@ -1,4 +1,4 @@
-package com.acme.edu;
+package com.acme.edu.Buffers;
 
 import com.acme.edu.Messages.ByteMessage;
 import com.acme.edu.Messages.IntMessage;
@@ -8,15 +8,16 @@ import com.acme.edu.Messages.StringMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LogBuffer {
+public class AggregationLogBuffer implements LogBuffer {
     private List<LogMessage> logMessageBuffer = new ArrayList<>();
 
+    @Override
     public void addMessage(LogMessage logMessage) {
         if (logMessage == null) return;
         logMessageBuffer.add(logMessage);
     }
 
-    public void flushIntegers() {
+    public void flushIntegersWithAggregation() {
         if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
         int aggregateValue = 0;
         for (LogMessage logMessage : logMessageBuffer) {
@@ -36,7 +37,7 @@ public class LogBuffer {
         logMessageBuffer.clear();
     }
 
-    public void flushBytes() {
+    public void flushBytesWithAggregation() {
         if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
         int aggregateValue = 0;
         for (LogMessage logMessage : logMessageBuffer) {
@@ -57,7 +58,7 @@ public class LogBuffer {
         logMessageBuffer.clear();
     }
 
-    public void flushStrings() {
+    public void flushStringsWithAggregation() {
         if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
         String currentString = "";
         String previousString = logMessageBuffer.get(0).getMessage();
@@ -83,11 +84,21 @@ public class LogBuffer {
 
 
 
+    @Override
     public void flushBuffer() {
         if (logMessageBuffer==null || logMessageBuffer.size()==0) return;
-        for (LogMessage logMessage: logMessageBuffer) {
-            log(logMessage);
+        if (logMessageBuffer.get(0) instanceof StringMessage) {
+            flushStringsWithAggregation();
+        } else if (logMessageBuffer.get(0) instanceof IntMessage) {
+            flushIntegersWithAggregation();
+        } else if (logMessageBuffer.get(0) instanceof ByteMessage) {
+            flushBytesWithAggregation();
+        } else {
+            for (LogMessage logMessage: logMessageBuffer) {
+                log(logMessage);
+            }
         }
+
         logMessageBuffer.clear();
     }
 
