@@ -29,17 +29,32 @@ public class LoggerApp {
 
     private void changeState(LoggerState newLoggerState) {
         if (currentLoggerState != LoggerState.NO_BUFFER_STATE && currentLoggerState != newLoggerState) {
-            logBuffer.flushMessagesDependingOnState(currentLoggerState);
+            logBufferedMessages(currentLoggerState);
             resetState();
         }
-//        logBuffer.flushMessagesDependingOnState(currentLoggerState);
         currentLoggerState = newLoggerState;
     }
 
+    public void logBufferedMessages(LoggerState state) {
+        switch (state) {
+            case INT_BUFFER_STATE:
+                logBuffer.flushIntegers();
+                break;
+            case BYTE_BUFFER_STATE:
+                logBuffer.flushBytes();
+                break;
+            case STRING_BUFFER_STATE:
+                logBuffer.flushStrings();
+                break;
+            case NO_BUFFER_STATE:
+                logBuffer.flushBuffer();
+                break;
+        }
+    }
 
 
     public void endLogSession() {
-        logBuffer.flushMessagesDependingOnState(currentLoggerState);
+        logBufferedMessages(currentLoggerState);
         resetState();
     }
 
@@ -117,16 +132,11 @@ public class LoggerApp {
 
 
     public static void main(String[] args) {
-
-        System.out.println(Byte.MIN_VALUE);
-        Logger.log("str 1");
-        Logger.log((byte)-10);
-        Logger.log((byte)Byte.MIN_VALUE);
-        Logger.log("str 2");
-        Logger.log(0);
+        System.out.println(Byte.MIN_VALUE+(-1));
+        Logger.log((byte)1);
+        Logger.log((byte)0);
+        Logger.log((byte)-1);
         Logger.endLogSession();
-
-        System.out.println(Byte.MIN_VALUE - 10);
     }
 
 

@@ -16,7 +16,7 @@ public class LogBuffer {
         logMessageBuffer.add(logMessage);
     }
 
-    private void flushIntegers() {
+    public void flushIntegers() {
         if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
         int aggregateValue = 0;
         for (LogMessage logMessage : logMessageBuffer) {
@@ -36,7 +36,7 @@ public class LogBuffer {
         logMessageBuffer.clear();
     }
 
-    private void flushBytes() {
+    public void flushBytes() {
         if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
         int aggregateValue = 0;
         for (LogMessage logMessage : logMessageBuffer) {
@@ -44,7 +44,7 @@ public class LogBuffer {
             if (Byte.MAX_VALUE - aggregateValue < currentValue) {  // overFlow
                 log(new ByteMessage(String.valueOf(aggregateValue)));
                 aggregateValue = currentValue;
-            } else if (Byte.MIN_VALUE + currentValue < Byte.MIN_VALUE){
+            } else if (aggregateValue + currentValue < Byte.MIN_VALUE){
                 log(new ByteMessage(String.valueOf(aggregateValue)));
                 aggregateValue = currentValue;
             }
@@ -57,7 +57,7 @@ public class LogBuffer {
         logMessageBuffer.clear();
     }
 
-    private void flushStrings() {
+    public void flushStrings() {
         if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
         String currentString = "";
         String previousString = logMessageBuffer.get(0).getMessage();
@@ -81,22 +81,7 @@ public class LogBuffer {
 
     }
 
-    public void flushMessagesDependingOnState(LoggerState state) {
-        switch (state) {
-            case INT_BUFFER_STATE:
-                flushIntegers();
-                break;
-            case BYTE_BUFFER_STATE:
-                flushBytes();
-                break;
-            case STRING_BUFFER_STATE:
-                flushStrings();
-                break;
-            case NO_BUFFER_STATE:
-                flushBuffer();
-                break;
-        }
-    }
+
 
     public void flushBuffer() {
         if (logMessageBuffer==null || logMessageBuffer.size()==0) return;
