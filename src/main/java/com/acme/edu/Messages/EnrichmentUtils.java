@@ -10,9 +10,6 @@ import static java.lang.System.lineSeparator;
  */
 public class EnrichmentUtils {
 
-    public static void enrichMessageWithDescription(LogMessage message) {
-         message.setMessage(message.getTypeDescription() + message.getMessage());
-    }
 
     public static String enrichObjectArray(Object[] array) {
         StringBuilder sb  = new StringBuilder();
