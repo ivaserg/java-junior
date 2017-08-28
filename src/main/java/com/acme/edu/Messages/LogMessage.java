@@ -11,12 +11,11 @@ public abstract class LogMessage {
     private String message;
 
 
-
     public LogMessage(String message) {
         this.message = message;
     }
 
-    void setMessage(String message) {
+    public void setMessage(String message) {
         this.message=message;
     }
 
@@ -32,12 +31,8 @@ public abstract class LogMessage {
         return typeDescription;
     }
 
-    public void enrichWithTypeDescription() {
-        setMessage(typeDescription + message);
-    }
-
     public void format() {
-        formatter.format(message);
+        formatter.format(this);
     }
 
     public void save() {

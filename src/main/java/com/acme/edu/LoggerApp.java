@@ -4,6 +4,7 @@ package com.acme.edu;
 import com.acme.edu.Buffers.AggregationLogBuffer;
 import com.acme.edu.Buffers.LogBuffer;
 import com.acme.edu.Formatters.DefaultFormatter;
+import com.acme.edu.Formatters.DescriptionFormatter;
 import com.acme.edu.Formatters.Formatter;
 import com.acme.edu.Messages.*;
 import com.acme.edu.Savers.ConsoleSaver;
@@ -15,9 +16,9 @@ public class LoggerApp {
 
 
     public LoggerApp() {
-        logBuffer = new AggregationLogBuffer();
         LogMessage.saver = new ConsoleSaver();
-        LogMessage.formatter =  new DefaultFormatter();
+        LogMessage.formatter =  new DescriptionFormatter();
+        logBuffer = new AggregationLogBuffer();
     }
 
     public LoggerApp(Saver saver, Formatter formatter, LogBuffer logBuffer) {

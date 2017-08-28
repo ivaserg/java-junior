@@ -103,7 +103,6 @@ public class AggregationLogBuffer implements LogBuffer {
     }
 
     private void log(LogMessage message) {
-        message.enrichWithTypeDescription();
         message.format();
         message.save();
     }

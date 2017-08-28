@@ -2,13 +2,10 @@ package com.acme.edu.Formatters;
 
 import com.acme.edu.Messages.LogMessage;
 
-/**
- * Created by vanbkin on 26.08.2017.
- */
-public class DefaultFormatter implements Formatter {
+public class DescriptionFormatter implements Formatter {
 
     @Override
     public void format(LogMessage logMessage) {
-        // NULL-Object
+        logMessage.setMessage(logMessage.getTypeDescription() + logMessage.getMessage());
     }
 }

@@ -1,6 +1,8 @@
 package com.acme.edu.Formatters;
 
+import com.acme.edu.Messages.LogMessage;
+
 public interface Formatter {
 
-    String format(String message);
+    void format(LogMessage logMessage);
 }
