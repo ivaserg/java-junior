@@ -11,7 +11,6 @@ import static java.lang.System.lineSeparator;
 public class ArrayFormatter implements Formatter {
     @Override
     public void format(LogMessage logMessage) {
-
     }
 
     public String formatObjectArray(Object[] array) {
