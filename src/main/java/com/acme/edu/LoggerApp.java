@@ -11,6 +11,8 @@ import com.acme.edu.Messages.*;
 import com.acme.edu.Savers.ConsoleSaver;
 import com.acme.edu.Savers.Saver;
 
+import java.util.List;
+
 public class LoggerApp {
     private LogBuffer logBuffer;
 
@@ -95,4 +97,8 @@ public class LoggerApp {
         logBuffer.addMessage(new VarArgsMessage(enrichedMessage));
     }
 
+    public static void main(String[] args) {
+
+
+    }
 }

@@ -10,7 +10,6 @@ public class IntMessage extends LogMessage {
     private static final String TYPE_DESCRIPTION = "primitive: ";
 
     public IntMessage(String message) {
-
         super(message);
         super.setTypeDescription(TYPE_DESCRIPTION);
     }
