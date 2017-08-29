@@ -8,7 +8,7 @@ import static java.lang.System.lineSeparator;
 /**
  * Created by vanbkin on 27.08.2017.
  */
-public abstract class EnrichmentUtils {
+public abstract class ArraysEnrichmentUtils {
 
     public static String enrichObjectArray(Object[] array) {
         StringBuilder sb  = new StringBuilder();
@@ -40,7 +40,7 @@ public abstract class EnrichmentUtils {
             for (int[][] j : i) {
                 sb.append("{" + lineSeparator());
                 for (int[] k : j) {
-                    sb.append(EnrichmentUtils.arrayToString(k)).append(lineSeparator());
+                    sb.append(ArraysEnrichmentUtils.arrayToString(k)).append(lineSeparator());
                 }
                 sb.append("}" + lineSeparator());
             }

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class LogMessage {
-    public static Formatter formatter;
     public static Saver saver;
 
     private List<Formatter> formattersList = new ArrayList<>();
@@ -20,7 +19,7 @@ public abstract class LogMessage {
         addFormatter(new DescriptionFormatter());
     }
 
-    public void addFormatter(Formatter formatter) {
+    private void addFormatter(Formatter formatter) {
         formattersList.add(formatter);
     }
 

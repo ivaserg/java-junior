@@ -11,20 +11,16 @@ import com.acme.edu.Messages.*;
 import com.acme.edu.Savers.ConsoleSaver;
 import com.acme.edu.Savers.Saver;
 
-import java.util.List;
-
 public class LoggerApp {
     private LogBuffer logBuffer;
 
     public LoggerApp() {
         LogMessage.saver = new ConsoleSaver();
-        LogMessage.formatter = new DescriptionFormatter();
         logBuffer = new AggregationLogBuffer(new LogBufferFlusher());
     }
 
     public LoggerApp(Saver saver, Formatter formatter, LogBuffer logBuffer) {
         LogMessage.saver = saver;
-        LogMessage.formatter = formatter;
         this.logBuffer = logBuffer;
     }
 
@@ -69,7 +65,7 @@ public class LoggerApp {
     public void log(int[] message) {
         if (message == null) return;
         logBuffer.setLogBufferInputState(LogBufferInputState.ARRAY_INPUT);
-        String enrichedMessage = EnrichmentUtils.enrichOneDimensionalArray(message);
+        String enrichedMessage = ArraysEnrichmentUtils.enrichOneDimensionalArray(message);
         logBuffer.addMessage(new ArrayMessage(enrichedMessage));
     }
 
@@ -77,7 +73,7 @@ public class LoggerApp {
     public void log(int[][] message) {
         if (message == null) return;
         logBuffer.setLogBufferInputState(LogBufferInputState.TWODIM_ARRAY_INPUT);
-        String enrichedMessage = EnrichmentUtils.enrichTwoDimensionalArray(message);
+        String enrichedMessage = ArraysEnrichmentUtils.enrichTwoDimensionalArray(message);
         logBuffer.addMessage(new TwoDimArrayMessage(enrichedMessage));
     }
 
@@ -85,7 +81,7 @@ public class LoggerApp {
     public void log(int[][][][] message) {
         if (message == null) return;
         logBuffer.setLogBufferInputState(LogBufferInputState.MULTIDIM_ARRAY_INPUT);
-        String enrichedMessage = EnrichmentUtils.enrichMultiDimensionalArray(message);
+        String enrichedMessage = ArraysEnrichmentUtils.enrichMultiDimensionalArray(message);
         logBuffer.addMessage(new MultiDimArrayMessage(enrichedMessage));
     }
 
@@ -93,7 +89,7 @@ public class LoggerApp {
     public void log(Object... varArgsArray) {
         if (varArgsArray.length == 0) return;
         logBuffer.setLogBufferInputState(LogBufferInputState.VARARGS_ARRAY_INPUT);
-        String enrichedMessage = EnrichmentUtils.enrichObjectArray(varArgsArray);
+        String enrichedMessage = ArraysEnrichmentUtils.enrichObjectArray(varArgsArray);
         logBuffer.addMessage(new VarArgsMessage(enrichedMessage));
     }
 
