@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by vanbkin on 28.08.2017.
  */
-public class LogBufferFlusher {
+public class AggregationLogBufferFlusher {
 
     public void flushBuffer(List<LogMessage> logMessageBuffer) {
         if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;

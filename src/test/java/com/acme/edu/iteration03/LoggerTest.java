@@ -11,7 +11,7 @@ import static java.lang.System.lineSeparator;
 
 public class LoggerTest implements SysoutCaptureAndAssertionAbility {
     //region given
-    @Before
+/*    @Before
     public void setUpSystemOut() throws IOException {
         resetOut();
         captureSysout();
@@ -117,6 +117,5 @@ public class LoggerTest implements SysoutCaptureAndAssertionAbility {
         assertSysoutContains("11");
         //endregion
     }
-
-
+*/
 }
