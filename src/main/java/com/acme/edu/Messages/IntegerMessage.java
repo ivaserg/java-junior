@@ -3,14 +3,14 @@ package com.acme.edu.Messages;
 import com.acme.edu.BusinessProcessors.Bufferizator;
 import com.acme.edu.BusinessProcessors.Decorator;
 import com.acme.edu.BusinessProcessors.LogFormatter;
-import com.acme.edu.Formatters.Formatter;
 import com.acme.edu.LoggerState;
 import com.acme.edu.Savers.Saver;
 
 /**
- * Created by vanbkin on 26.08.2017.
+ * Created by vanbkin on 30.08.2017.
  */
-public class BooleanMessage implements Message {
+public class IntegerMessage implements Message {
+
     private static final String TYPE_DESCRIPTION = "primitive: ";
 
     private String message;
@@ -18,20 +18,22 @@ public class BooleanMessage implements Message {
     private LogFormatter logFormatter;
     private LoggerState loggerState;
 
-    public BooleanMessage(String message, Saver saver, LogFormatter logFormatter, LoggerState loggerState) {
+    public IntegerMessage(String message, Saver saver, LogFormatter logFormatter, LoggerState loggerState) {
         this.message=message;
         this.saver=saver;
         this.logFormatter=logFormatter;
         this.loggerState=loggerState;
     }
 
+
     @Override
     public void save() {
-         saver.save(message);
+        saver.save(message);
     }
 
     @Override
     public void visit(Bufferizator bufferizator) {
+
 
     }
 
@@ -42,6 +44,6 @@ public class BooleanMessage implements Message {
 
     @Override
     public void visit(Decorator decorator) {
-          message = TYPE_DESCRIPTION + message;
+        message = TYPE_DESCRIPTION + message;
     }
 }

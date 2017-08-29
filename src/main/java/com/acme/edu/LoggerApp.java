@@ -5,23 +5,29 @@ import com.acme.edu.Buffers.AggregationLogBuffer;
 import com.acme.edu.Buffers.LogBuffer;
 import com.acme.edu.Buffers.LogBufferFlusher;
 import com.acme.edu.Buffers.LogBufferInputState;
-import com.acme.edu.Formatters.DescriptionFormatter;
-import com.acme.edu.Formatters.Formatter;
+import com.acme.edu.BusinessProcessors.Bufferizator;
+import com.acme.edu.BusinessProcessors.Decorator;
+import com.acme.edu.BusinessProcessors.LogFormatter;
 import com.acme.edu.Messages.*;
 import com.acme.edu.Savers.ConsoleSaver;
 import com.acme.edu.Savers.Saver;
 
 public class LoggerApp {
     private LogBuffer logBuffer;
+    private Saver saver;
+    private LogFormatter logFormatter;
+    private LoggerState loggerState = new LoggerState();
 
     public LoggerApp() {
         LogMessage.saver = new ConsoleSaver();
+        this.saver=new ConsoleSaver();
         logBuffer = new AggregationLogBuffer(new LogBufferFlusher());
     }
 
-    public LoggerApp(Saver saver, Formatter formatter, LogBuffer logBuffer) {
-        LogMessage.saver = saver;
-        this.logBuffer = logBuffer;
+
+    public LoggerApp(Saver saver, LogFormatter logFormatter)  {
+        this.logFormatter = logFormatter;
+        this.saver=saver;
     }
 
 
@@ -53,7 +59,11 @@ public class LoggerApp {
 
     public void log(boolean message) {
         logBuffer.setLogBufferInputState(LogBufferInputState.BOOLEAN_INPUT);
-        logBuffer.addMessage(new BooleanMessage(Boolean.toString(message)));
+        BooleanMessage booleanMessage = new BooleanMessage(Boolean.toString(message), saver, logFormatter, loggerState);
+        booleanMessage.visit(new Bufferizator());
+        booleanMessage.visit(new LogFormatter());
+        booleanMessage.visit(new Decorator());
+        booleanMessage.save();
     }
 
     public void log(Object message) {
