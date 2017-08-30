@@ -1,47 +1,43 @@
 package com.acme.edu.Messages;
 
-import com.acme.edu.BusinessProcessors.Bufferizator;
-import com.acme.edu.BusinessProcessors.Decorator;
-import com.acme.edu.BusinessProcessors.LogFormatter;
-import com.acme.edu.Formatters.Formatter;
-import com.acme.edu.LoggerState;
+import com.acme.edu.BusinessProcessors.Visitor;
 import com.acme.edu.Savers.Saver;
 
 /**
  * Created by vanbkin on 26.08.2017.
  */
 public class BooleanMessage implements Message {
-    private static final String TYPE_DESCRIPTION = "primitive: ";
 
     private String message;
     private Saver saver;
-    private LogFormatter logFormatter;
-    private LoggerState loggerState;
+    public boolean isReady=true;
 
-    public BooleanMessage(String message, Saver saver, LogFormatter logFormatter, LoggerState loggerState) {
+    public BooleanMessage(String message, Saver saver) {
         this.message=message;
         this.saver=saver;
-        this.logFormatter=logFormatter;
-        this.loggerState=loggerState;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public void setMessage(String message) {
+        this.message=message;
+
     }
 
     @Override
     public void save() {
-         saver.save(message);
+        if (isReady) {
+            saver.save(message);
+        }
     }
 
-    @Override
-    public void visit(Bufferizator bufferizator) {
-
-    }
 
     @Override
-    public void visit(LogFormatter formatter) {
-
-    }
-
-    @Override
-    public void visit(Decorator decorator) {
-          message = TYPE_DESCRIPTION + message;
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 }

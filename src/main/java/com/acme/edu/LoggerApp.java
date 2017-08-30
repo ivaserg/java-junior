@@ -5,7 +5,7 @@ import com.acme.edu.Buffers.AggregationLogBuffer;
 import com.acme.edu.Buffers.LogBuffer;
 import com.acme.edu.Buffers.LogBufferFlusher;
 import com.acme.edu.Buffers.LogBufferInputState;
-import com.acme.edu.BusinessProcessors.Bufferizator;
+import com.acme.edu.BusinessProcessors.Aggregator;
 import com.acme.edu.BusinessProcessors.Decorator;
 import com.acme.edu.BusinessProcessors.LogFormatter;
 import com.acme.edu.Messages.*;
@@ -13,15 +13,23 @@ import com.acme.edu.Savers.ConsoleSaver;
 import com.acme.edu.Savers.Saver;
 
 public class LoggerApp {
+    // To
     private LogBuffer logBuffer;
+    //
     private Saver saver;
     private LogFormatter logFormatter;
-    private LoggerState loggerState = new LoggerState();
+    private Decorator decorator;
+    private Aggregator aggregator;
 
     public LoggerApp() {
         LogMessage.saver = new ConsoleSaver();
         this.saver=new ConsoleSaver();
         logBuffer = new AggregationLogBuffer(new LogBufferFlusher());
+
+        this.decorator = new Decorator();
+        this.logFormatter = new LogFormatter();
+        this.aggregator = new Aggregator();
+
     }
 
 
@@ -37,7 +45,10 @@ public class LoggerApp {
 
     public void log(int message) {
         logBuffer.setLogBufferInputState(LogBufferInputState.INT_INPUT);
-        logBuffer.addMessage(new IntMessage(Integer.toString(message)));
+        IntMessage intMessage = new IntMessage(Integer.toString(message), saver);
+        intMessage.accept(aggregator);
+
+        intMessage.save();
     }
 
 
@@ -59,10 +70,10 @@ public class LoggerApp {
 
     public void log(boolean message) {
         logBuffer.setLogBufferInputState(LogBufferInputState.BOOLEAN_INPUT);
-        BooleanMessage booleanMessage = new BooleanMessage(Boolean.toString(message), saver, logFormatter, loggerState);
-        booleanMessage.visit(new Bufferizator());
-        booleanMessage.visit(new LogFormatter());
-        booleanMessage.visit(new Decorator());
+        BooleanMessage booleanMessage = new BooleanMessage(Boolean.toString(message), saver);
+        booleanMessage.accept(aggregator);
+        booleanMessage.accept(decorator);
+        booleanMessage.accept(logFormatter);
         booleanMessage.save();
     }
 

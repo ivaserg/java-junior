@@ -16,8 +16,8 @@ public class LogBufferFlusher {
         if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
         if (logMessageBuffer.get(0) instanceof StringMessage && LogBufferInputState.STRING_INPUT.isBufferingOptionEnabled()) {
             flushStringsWithAggregation(logMessageBuffer);
-        } else if (logMessageBuffer.get(0) instanceof IntMessage && LogBufferInputState.INT_INPUT.isBufferingOptionEnabled()) {
-            flushIntegersWithAggregation(logMessageBuffer);
+//        } else if (logMessageBuffer.get(0) instanceof IntMessage && LogBufferInputState.INT_INPUT.isBufferingOptionEnabled()) {
+//            flushIntegersWithAggregation(logMessageBuffer);
         } else if (logMessageBuffer.get(0) instanceof ByteMessage && LogBufferInputState.BYTE_INPUT.isBufferingOptionEnabled()) {
             flushBytesWithAggregation(logMessageBuffer);
         } else {
@@ -30,23 +30,23 @@ public class LogBufferFlusher {
 
 
     private void flushIntegersWithAggregation(List<LogMessage> logMessageBuffer) {
-        if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
-        int aggregateValue = 0;
-        for (LogMessage logMessage : logMessageBuffer) {
-            int currentValue = Integer.valueOf(logMessage.getMessage());
-            if (Integer.MAX_VALUE - aggregateValue < currentValue) {  // overFlow
-                flush(new IntMessage(String.valueOf(aggregateValue)));
-                aggregateValue = currentValue;
-            } else if (Integer.MIN_VALUE + aggregateValue > currentValue) {
-                flush(new IntMessage(String.valueOf(aggregateValue)));
-                aggregateValue = currentValue;
-            } else {
-                aggregateValue += currentValue;
-            }
-
-        }
-        flush(new IntMessage(String.valueOf(aggregateValue)));
-        logMessageBuffer.clear();
+//        if (logMessageBuffer == null || logMessageBuffer.size() == 0) return;
+//        int aggregateValue = 0;
+//        for (LogMessage logMessage : logMessageBuffer) {
+//            int currentValue = Integer.valueOf(logMessage.getMessage());
+//            if (Integer.MAX_VALUE - aggregateValue < currentValue) {  // overFlow
+//                flush(new IntMessage(String.valueOf(aggregateValue)));
+//                aggregateValue = currentValue;
+//            } else if (Integer.MIN_VALUE + aggregateValue > currentValue) {
+//                flush(new IntMessage(String.valueOf(aggregateValue)));
+//                aggregateValue = currentValue;
+//            } else {
+//                aggregateValue += currentValue;
+//            }
+//
+//        }
+//        flush(new IntMessage(String.valueOf(aggregateValue)));
+//        logMessageBuffer.clear();
     }
 
     private void flushBytesWithAggregation(List<LogMessage> logMessageBuffer) {
