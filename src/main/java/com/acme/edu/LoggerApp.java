@@ -91,4 +91,11 @@ public class LoggerApp {
         logBuffer.addMessage(new VarArgsMessage(enrichedMessage));
     }
 
+    public static void main(String[] args) {
+        LogBuffer sut = new LogBuffer(new AggregationLogBufferFlusher());
+
+        sut.addMessage(new IntMessage("9"));
+
+
+    }
 }
