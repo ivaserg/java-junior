@@ -8,4 +8,9 @@ public class DescriptionFormatter implements Formatter {
     public void format(LogMessage logMessage) {
         logMessage.setMessage(logMessage.getTypeDescription() + logMessage.getMessage());
     }
+
+    @Override
+    public String format(String message) {
+        return message;
+    }
 }

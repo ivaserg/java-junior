@@ -10,7 +10,7 @@ import java.io.*;
 
 public class LoggerTest implements SysoutCaptureAndAssertionAbility {
     //region given
-/*    @Before
+    @Before
     public void setUpSystemOut() throws IOException {
         resetOut();
         captureSysout();
@@ -113,5 +113,5 @@ public class LoggerTest implements SysoutCaptureAndAssertionAbility {
         //endregion
     }
 
-*/
+
 }

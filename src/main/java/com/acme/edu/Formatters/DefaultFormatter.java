@@ -11,4 +11,9 @@ public class DefaultFormatter implements Formatter {
     public void format(LogMessage logMessage) {
         // NULL-Object
     }
+
+    @Override
+    public String format(String message) {
+        return message;
+    }
 }
