@@ -3,7 +3,6 @@ package com.acme.edu.handler;
 import com.acme.edu.Formatters.Formatter;
 import com.acme.edu.Savers.Saver;
 import com.acme.edu.event.ByteMessageLoggedEvent;
-import com.acme.edu.event.IntMessageLoggedEvent;
 import com.acme.edu.framework.Handler;
 
 public class ByteMessageLoggedEventHandler implements Handler<ByteMessageLoggedEvent>{
@@ -21,12 +20,23 @@ public class ByteMessageLoggedEventHandler implements Handler<ByteMessageLoggedE
     @Override
     public void onEvent(ByteMessageLoggedEvent event) {
         if (event.isCollectionNeeded()) {
-            aggregatedValue += Integer.valueOf(event.getMessage());
+            int  currentValue = Byte.valueOf(event.getMessage());
+            if (Byte.MAX_VALUE - aggregatedValue < currentValue) {  // overFlow
+                saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
+                aggregatedValue = currentValue;
+            } else if (aggregatedValue + currentValue < Byte.MIN_VALUE) {
+                saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
+                aggregatedValue = currentValue;
+            } else {
+                aggregatedValue += currentValue;
+            }
         } else {
-            aggregatedValue += Integer.valueOf(event.getMessage());
+            aggregatedValue += Byte.valueOf(event.getMessage());
             saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
             aggregatedValue=0;
         }
+
+
 
     }
 

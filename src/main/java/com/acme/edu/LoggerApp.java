@@ -1,12 +1,8 @@
 package com.acme.edu;
 
 
-import com.acme.edu.Buffers.LogBuffer;
-import com.acme.edu.Buffers.AggregationLogBufferFlusher;
-import com.acme.edu.Buffers.LogBufferInputState;
 import com.acme.edu.Formatters.DefaultFormatter;
 import com.acme.edu.Formatters.Formatter;
-import com.acme.edu.Messages.*;
 import com.acme.edu.Savers.ConsoleSaver;
 import com.acme.edu.Savers.Saver;
 import com.acme.edu.event.*;
@@ -14,7 +10,7 @@ import com.acme.edu.framework.EventDispatcher;
 import com.acme.edu.handler.*;
 
 public class LoggerApp {
-    private LogBuffer logBuffer;
+
     private LoggerState loggerState = new LoggerState();
     EventDispatcher dispatcher;
 
@@ -34,15 +30,6 @@ public class LoggerApp {
     }
 
 
-    public LoggerApp() {
-        LogMessage.saver = new ConsoleSaver();
-        logBuffer = new LogBuffer(new AggregationLogBufferFlusher());
-    }
-
-    public LoggerApp(Saver saver, Formatter formatter, LogBuffer logBuffer) {
-        LogMessage.saver = saver;
-        this.logBuffer = logBuffer;
-    }
 
 
     public void endLogSession() {
@@ -96,44 +83,5 @@ public class LoggerApp {
         dispatcher.dispatch(new ObjectMessageLoggedEvent(message.toString()));
     }
 
-//    public void log(int[] message) {
-//        if (message == null) return;
-//        logBuffer.setLogBufferInputState(LogBufferInputState.ARRAY_INPUT);
-//        String enrichedMessage = ArraysEnrichmentUtils.enrichOneDimensionalArray(message);
-//        logBuffer.addMessage(new ArrayMessage(enrichedMessage));
-//    }
-//
-//
-//    public void log(int[][] message) {
-//        if (message == null) return;
-//        logBuffer.setLogBufferInputState(LogBufferInputState.TWODIM_ARRAY_INPUT);
-//        String enrichedMessage = ArraysEnrichmentUtils.enrichTwoDimensionalArray(message);
-//        logBuffer.addMessage(new TwoDimArrayMessage(enrichedMessage));
-//    }
-//
-//
-//    public void log(int[][][][] message) {
-//        if (message == null) return;
-//        logBuffer.setLogBufferInputState(LogBufferInputState.MULTIDIM_ARRAY_INPUT);
-//        String enrichedMessage = ArraysEnrichmentUtils.enrichMultiDimensionalArray(message);
-//        logBuffer.addMessage(new MultiDimArrayMessage(enrichedMessage));
-//    }
-//
-//
-//    public void log(Object... varArgsArray) {
-//        if (varArgsArray.length == 0) return;
-//        logBuffer.setLogBufferInputState(LogBufferInputState.VARARGS_ARRAY_INPUT);
-//        String enrichedMessage = ArraysEnrichmentUtils.enrichObjectArray(varArgsArray);
-//        logBuffer.addMessage(new VarArgsMessage(enrichedMessage));
-//    }
 
-    public static void main(String[] args) {
-
-        LoggerApp loggerApp = new LoggerApp();
-        loggerApp.log("str 3");
-        loggerApp.log("str 3");
-        loggerApp.endLogSession();
-
-
-    }
 }

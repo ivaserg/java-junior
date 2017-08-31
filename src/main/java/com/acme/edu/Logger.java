@@ -61,4 +61,16 @@ public class Logger {
     public static void endLogSession() {
         loggerApp.endLogSession();
     }
+
+    public static void main(String[] args) {
+        Logger.log("str 1");
+        Logger.log("str 2");
+        Logger.log("str 2");
+        Logger.log(0);
+        Logger.log("str 2");
+        Logger.log("str 3");
+        Logger.log("str 3");
+        Logger.log("str 3");
+        Logger.endLogSession();
+    }
 }

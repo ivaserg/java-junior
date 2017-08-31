@@ -1,4 +1,4 @@
-package com.acme.edu.Messages;
+package com.acme.edu.Formatters;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

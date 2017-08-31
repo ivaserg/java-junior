@@ -20,7 +20,17 @@ public class IntMessageLoggedEventHandler implements Handler<IntMessageLoggedEve
     @Override
     public void onEvent(IntMessageLoggedEvent event) {
         if (event.isCollectionNeeded()) {
-            aggregatedValue += Integer.valueOf(event.getMessage());
+            int currentValue = Integer.valueOf(event.getMessage());
+            if (Integer.MAX_VALUE - aggregatedValue < currentValue) {  // overFlow
+                saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
+                aggregatedValue = currentValue;
+            } else if (Integer.MIN_VALUE + aggregatedValue > currentValue) {
+                saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
+                aggregatedValue = currentValue;
+            } else {
+                aggregatedValue += currentValue;
+            }
+
          } else {
             aggregatedValue += Integer.valueOf(event.getMessage());
             saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
