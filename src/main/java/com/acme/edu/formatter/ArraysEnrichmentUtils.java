@@ -1,4 +1,4 @@
-package com.acme.edu.Formatters;
+package com.acme.edu.formatter;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

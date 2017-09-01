@@ -1,4 +1,4 @@
-package com.acme.edu.Formatters;
+package com.acme.edu.formatter;
 
 /**
  * Created by vanbkin on 26.08.2017.

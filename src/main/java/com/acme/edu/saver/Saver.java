@@ -1,4 +1,4 @@
-package com.acme.edu.Savers;
+package com.acme.edu.saver;
 
 public interface Saver {
 

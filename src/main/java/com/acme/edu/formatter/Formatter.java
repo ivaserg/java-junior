@@ -1,4 +1,4 @@
-package com.acme.edu.Formatters;
+package com.acme.edu.formatter;
 
 public interface Formatter {
 

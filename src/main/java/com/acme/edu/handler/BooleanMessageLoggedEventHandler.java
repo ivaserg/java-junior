@@ -1,7 +1,7 @@
 package com.acme.edu.handler;
 
-import com.acme.edu.Formatters.Formatter;
-import com.acme.edu.Savers.Saver;
+import com.acme.edu.formatter.Formatter;
+import com.acme.edu.saver.Saver;
 import com.acme.edu.event.BooleanMessageLoggedEvent;
 import com.acme.edu.framework.Handler;
 
