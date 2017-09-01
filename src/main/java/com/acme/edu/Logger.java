@@ -1,8 +1,11 @@
 package com.acme.edu;
 
+import com.acme.edu.formatter.DefaultFormatter;
+import com.acme.edu.saver.ConsoleSaver;
+
 public class Logger {
 
-    private static ConsoleMessageEventHandler consoleEvenetHandler = new ConsoleMessageEventHandler();
+    private static ConsoleMessageEventHandler consoleEvenetHandler = new ConsoleMessageEventHandler(new ConsoleSaver(), new DefaultFormatter());
 
 
     public static void log(int message) {
