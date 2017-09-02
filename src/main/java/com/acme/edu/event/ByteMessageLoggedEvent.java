@@ -4,6 +4,10 @@ public class ByteMessageLoggedEvent extends AbstractEvent {
     private String message;
     private boolean collectionNeeded;
 
+    public ByteMessageLoggedEvent(String message) {
+        this.message = message;
+    }
+
     public ByteMessageLoggedEvent(String message, boolean collectionNeeded) {
         this.message = message;
         this.collectionNeeded = collectionNeeded;

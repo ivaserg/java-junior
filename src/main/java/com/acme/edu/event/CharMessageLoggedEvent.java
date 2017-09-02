@@ -4,7 +4,6 @@ public class CharMessageLoggedEvent extends AbstractEvent {
     private String message;
 
     public CharMessageLoggedEvent(String message) {
-
         this.message = message;
     }
 

@@ -1,6 +1,8 @@
 package com.acme.edu.handler;
 
+import com.acme.edu.formatter.DefaultFormatter;
 import com.acme.edu.formatter.Formatter;
+import com.acme.edu.saver.ConsoleSaver;
 import com.acme.edu.saver.Saver;
 import com.acme.edu.event.IntMessageLoggedEvent;
 import com.acme.edu.framework.Handler;
@@ -19,23 +21,56 @@ public class IntMessageLoggedEventHandler implements Handler<IntMessageLoggedEve
 
     @Override
     public void onEvent(IntMessageLoggedEvent event) {
+        int currentValue = Integer.valueOf(event.getMessage());
         if (event.isCollectionNeeded()) {
-            int currentValue = Integer.valueOf(event.getMessage());
-            if (Integer.MAX_VALUE - aggregatedValue < currentValue) {  // overFlow
+            if (isOverflow(currentValue)) {  // overFlow
                 saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
                 aggregatedValue = currentValue;
-            } else if (Integer.MIN_VALUE + aggregatedValue > currentValue) {
-                saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
-                aggregatedValue = currentValue;
-            } else {
+            }
+             else {
                 aggregatedValue += currentValue;
             }
 
          } else {
-            aggregatedValue += Integer.valueOf(event.getMessage());
-            saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
+            if (isOverflow(currentValue)) {  // overFlow
+                saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
+                saver.save(formatter.format(TYPE_DESCRIPTION + currentValue));
+            }
+            else {
+                aggregatedValue += currentValue;
+                saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
+            }
+
             aggregatedValue=0;
         }
+
+    }
+
+    public boolean isOverflow(int currentValue) {
+        if (aggregatedValue > 0 && currentValue > 0) {
+          return (Integer.MAX_VALUE - aggregatedValue < currentValue);
+        }
+        else if (aggregatedValue < 0 && currentValue < 0) {
+            return  (Integer.MIN_VALUE  - aggregatedValue >  currentValue);
+        }
+        else {
+            return false;
+        }
+
+    }
+
+    public static void main(String[] args) {
+        IntMessageLoggedEventHandler sut = new IntMessageLoggedEventHandler(new ConsoleSaver(), new DefaultFormatter());
+
+
+        sut.onEvent(new IntMessageLoggedEvent("-30", true));
+        sut.onEvent(new IntMessageLoggedEvent(String.valueOf(Integer.MAX_VALUE), true));
+        sut.onEvent(new IntMessageLoggedEvent("31", true));
+        sut.onEvent(new IntMessageLoggedEvent("10", true));
+        sut.onEvent(new IntMessageLoggedEvent("6", true));
+        sut.onEvent(new IntMessageLoggedEvent(String.valueOf(Integer.MIN_VALUE), true));
+        sut.onEvent(new IntMessageLoggedEvent("-18", true));
+        sut.onEvent(new IntMessageLoggedEvent("-10", false));
 
     }
 }

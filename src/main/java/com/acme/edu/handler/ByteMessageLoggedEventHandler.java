@@ -1,5 +1,6 @@
 package com.acme.edu.handler;
 
+import com.acme.edu.event.IntMessageLoggedEvent;
 import com.acme.edu.formatter.Formatter;
 import com.acme.edu.saver.Saver;
 import com.acme.edu.event.ByteMessageLoggedEvent;
@@ -17,26 +18,44 @@ public class ByteMessageLoggedEventHandler implements Handler<ByteMessageLoggedE
         this.formatter = formatter;
     }
 
+
     @Override
     public void onEvent(ByteMessageLoggedEvent event) {
+        byte currentValue = Byte.valueOf(event.getMessage());
         if (event.isCollectionNeeded()) {
-            int  currentValue = Byte.valueOf(event.getMessage());
-            if (Byte.MAX_VALUE - aggregatedValue < currentValue) {  // overFlow
+            if (isOverflow(currentValue)) {  // overFlow
                 saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
                 aggregatedValue = currentValue;
-            } else if (aggregatedValue + currentValue < Byte.MIN_VALUE) {
-                saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
-                aggregatedValue = currentValue;
-            } else {
+            }
+            else {
                 aggregatedValue += currentValue;
             }
+
         } else {
-            aggregatedValue += Byte.valueOf(event.getMessage());
-            saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
+            if (isOverflow(currentValue)) {  // overFlow
+                saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
+                saver.save(formatter.format(TYPE_DESCRIPTION + currentValue));
+            }
+            else {
+                aggregatedValue += currentValue;
+                saver.save(formatter.format(TYPE_DESCRIPTION + aggregatedValue));
+            }
+
             aggregatedValue=0;
         }
 
+    }
 
+    public boolean isOverflow(int currentValue) {
+        if (aggregatedValue > 0 && currentValue > 0) {
+            return (Byte.MAX_VALUE - aggregatedValue < currentValue);
+        }
+        else if (aggregatedValue < 0 && currentValue < 0) {
+            return  (Byte.MIN_VALUE  - aggregatedValue >  currentValue);
+        }
+        else {
+            return false;
+        }
 
     }
 
