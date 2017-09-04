@@ -8,7 +8,7 @@ import com.acme.edu.handler.*;
 import com.acme.edu.saver.Saver;
 
 public class ConsoleMessageEventHandler implements MessageEventHandler {
-    private LoggerState loggerState = new LoggerState();
+    private MessageEventHandlerState messageEventHandlerState = new MessageEventHandlerState();
     private EventDispatcher dispatcher = new EventDispatcher();
     private Saver saver;
     private Formatter formatter;
@@ -30,13 +30,13 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
     }
 
     public void endLogSession() {
-        loggerState.switchState(loggerState.getPreviousState());
+        messageEventHandlerState.switchState(messageEventHandlerState.getPreviousState());
         flushCache();
     }
 
 
     public void flushCache() {
-        dispatcher.dispatch(new FlushCacheEvent(loggerState.getPreviousState()));
+        dispatcher.dispatch(new FlushCacheEvent(messageEventHandlerState.getPreviousState()));
     }
 
     @Override
@@ -58,8 +58,8 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
 
 
     public void log(int message) {
-        loggerState.switchState(State.INT_INPUT);
-        if (loggerState.isStateSwitched()) {
+        messageEventHandlerState.switchState(State.INT_INPUT);
+        if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
         }
         dispatcher.dispatch(new IntMessageLoggedEvent(String.valueOf(message), true));
@@ -67,8 +67,8 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
 
 
     public void log(byte message) {
-        loggerState.switchState(State.BYTE_INPUT);
-        if (loggerState.isStateSwitched()) {
+        messageEventHandlerState.switchState(State.BYTE_INPUT);
+        if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
         }
         dispatcher.dispatch(new ByteMessageLoggedEvent(String.valueOf(message), true));
@@ -76,8 +76,8 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
 
 
     public void log(char message) {
-        loggerState.switchState(State.CHAR_INPUT);
-        if (loggerState.isStateSwitched()) {
+        messageEventHandlerState.switchState(State.CHAR_INPUT);
+        if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
         }
         dispatcher.dispatch(new CharMessageLoggedEvent(String.valueOf(message)));
@@ -86,8 +86,8 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
 
     public void log(String message) {
         if (message == null) return;
-        loggerState.switchState(State.STRING_INPUT);
-        if (loggerState.isStateSwitched()) {
+        messageEventHandlerState.switchState(State.STRING_INPUT);
+        if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
         }
         dispatcher.dispatch(new StringMessageLoggedEvent(message, true));
@@ -95,8 +95,8 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
 
 
     public void log(boolean message) {
-        loggerState.switchState(State.BOOLEAN_INPUT);
-        if (loggerState.isStateSwitched()) {
+        messageEventHandlerState.switchState(State.BOOLEAN_INPUT);
+        if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
         }
         dispatcher.dispatch(new BooleanMessageLoggedEvent(Boolean.toString(message)));
@@ -106,8 +106,8 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
 
     public void log(Object message) {
         if (message == null) return;
-        loggerState.switchState(State.OBJECT_INPUT);
-        if (loggerState.isStateSwitched()) {
+        messageEventHandlerState.switchState(State.OBJECT_INPUT);
+        if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
         }
         dispatcher.dispatch(new ObjectMessageLoggedEvent(message.toString()));

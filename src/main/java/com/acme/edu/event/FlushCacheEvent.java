@@ -1,6 +1,5 @@
 package com.acme.edu.event;
 
-import com.acme.edu.LoggerState;
 import com.acme.edu.State;
 
 public class FlushCacheEvent extends AbstractEvent {

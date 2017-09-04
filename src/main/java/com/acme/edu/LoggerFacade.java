@@ -3,7 +3,7 @@ package com.acme.edu;
 import com.acme.edu.formatter.DefaultFormatter;
 import com.acme.edu.saver.ConsoleSaver;
 
-public class Logger {
+public class LoggerFacade {
 
     private static ConsoleMessageEventHandler consoleEvenetHandler = new ConsoleMessageEventHandler(new ConsoleSaver(), new DefaultFormatter());
 

@@ -1,6 +1,8 @@
 package com.acme.edu.handler;
 
+import com.acme.edu.formatter.DefaultFormatter;
 import com.acme.edu.formatter.Formatter;
+import com.acme.edu.saver.ConsoleSaver;
 import com.acme.edu.saver.Saver;
 import com.acme.edu.event.StringMessageLoggedEvent;
 import com.acme.edu.framework.Handler;
@@ -20,22 +22,48 @@ public class StringMessageLoggedEventHandler implements Handler<StringMessageLog
 
     @Override
     public void onEvent(StringMessageLoggedEvent event) {
+        String currentMessage = event.getMessage();
         if (event.isCollectionNeeded()) {
-            if (event.getMessage().equals(cachedMessage) || cachedMessage.isEmpty()) {
-                cachedMessage = event.getMessage();
+            if (currentMessage.equals(cachedMessage) || cachedMessage.isEmpty()) {
+                cachedMessage = currentMessage;
                 aggregatedValue++;
             } else {
-                String numberOfStrings = aggregatedValue > 1 ? " (x" + aggregatedValue + ")" : "";
-                saver.save(formatter.format(TYPE_DESCRIPTION + cachedMessage + numberOfStrings));
-                cachedMessage = event.getMessage();
+                saver.save(formatter.format(TYPE_DESCRIPTION + cachedMessage + getNumberOfCachedMessages()));
+                cachedMessage = currentMessage;
                 aggregatedValue=1;
             }
         } else {
-            String numberOfStrings = aggregatedValue > 1 ? " (x" + aggregatedValue + ")" : "";
-            saver.save(formatter.format(TYPE_DESCRIPTION + cachedMessage + numberOfStrings));
-            aggregatedValue=0;
-            cachedMessage="";
+            if (currentMessage.equals(cachedMessage) || cachedMessage.isEmpty())  {
+                aggregatedValue++;
+                saver.save(formatter.format(TYPE_DESCRIPTION + currentMessage + getNumberOfCachedMessages()));
+                aggregatedValue=0;
+                cachedMessage="";
+            } else {
+                saver.save(formatter.format(TYPE_DESCRIPTION + cachedMessage + getNumberOfCachedMessages()));
+                aggregatedValue=0;
+                saver.save(formatter.format(TYPE_DESCRIPTION + currentMessage + getNumberOfCachedMessages()));
+                cachedMessage="";
+            }
+
         }
 
+    }
+
+    private String getNumberOfCachedMessages() {
+        return aggregatedValue > 1 ? " (x" + aggregatedValue + ")" : "";
+    }
+
+    public static void main(String[] args) {
+        StringMessageLoggedEventHandler sut = new StringMessageLoggedEventHandler(new ConsoleSaver(), new DefaultFormatter());
+
+        sut.onEvent(new StringMessageLoggedEvent("str 1", true));
+        sut.onEvent(new StringMessageLoggedEvent("str 1", true));
+        sut.onEvent(new StringMessageLoggedEvent("str 3", true));
+        sut.onEvent(new StringMessageLoggedEvent("str 4", true));
+        sut.onEvent(new StringMessageLoggedEvent("str 4", true));
+        sut.onEvent(new StringMessageLoggedEvent("str 4", true));
+        sut.onEvent(new StringMessageLoggedEvent("str 4", true));
+        sut.onEvent(new StringMessageLoggedEvent("str 4", true));
+        sut.onEvent(new StringMessageLoggedEvent("str 1", false));
     }
 }

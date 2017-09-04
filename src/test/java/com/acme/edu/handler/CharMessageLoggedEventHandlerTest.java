@@ -1,19 +1,20 @@
 package com.acme.edu.handler;
 
+import com.acme.edu.event.CharMessageLoggedEvent;
 import com.acme.edu.formatter.Formatter;
 import com.acme.edu.saver.Saver;
-import com.acme.edu.event.CharMessageLoggedEvent;
 import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class CharMessageLoggedEventHandlerTest {
+    Saver saver = mock(Saver.class);
+    Formatter formatter = mock(Formatter.class);
+    CharMessageLoggedEventHandler sut = new CharMessageLoggedEventHandler(saver, formatter);
+
     @Test
     public void shouldAskFOrmatterToFormatBooleanMessageWithDescription() throws Exception {
-        Saver saver = mock(Saver.class);
-        Formatter formatter = mock(Formatter.class);
-        CharMessageLoggedEventHandler sut = new CharMessageLoggedEventHandler(saver, formatter);
 
         sut.onEvent(new CharMessageLoggedEvent("A"));
 
