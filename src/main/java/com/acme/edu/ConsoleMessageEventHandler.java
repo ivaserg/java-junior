@@ -56,11 +56,7 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
         } else if (message instanceof Character) {
             log((char) message);
         } else if (message instanceof String) {
-            try {
-                log((String) message);
-            } catch (IllegalInputMessageException e) {
-                e.printStackTrace();
-            }
+            log((String) message);
         } else if (message instanceof Boolean) {
             log((boolean) message);
         } else {

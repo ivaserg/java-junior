@@ -1,5 +1,7 @@
 package com.acme.edu.framework;
 
+import com.acme.edu.exception.MessageHandlingException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +37,13 @@ public class EventDispatcher {
     public <E extends Event> void dispatch(E event) {
         Handler<E> handler = (Handler<E>) handlers.get(event.getClass());
         if (handler != null) {
-            handler.onEvent(event);
+            try {
+                handler.onEvent(event);
+            }
+            catch (MessageHandlingException e) {
+
+            }
+
         }
     }
 
