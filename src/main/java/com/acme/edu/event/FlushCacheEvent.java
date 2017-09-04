@@ -1,15 +1,16 @@
 package com.acme.edu.event;
 
+import com.acme.edu.MessageEventHandlerState;
 import com.acme.edu.State;
 
 public class FlushCacheEvent extends AbstractEvent {
-    private State previousState;
+    private MessageEventHandlerState messageEventHandlerState;
 
-    public FlushCacheEvent(State previousState) {
-        this.previousState = previousState;
+    public FlushCacheEvent(MessageEventHandlerState messageEventHandlerState) {
+        this.messageEventHandlerState = messageEventHandlerState;
     }
 
     public State getPreviousState() {
-        return previousState;
+        return messageEventHandlerState.getPreviousState();
     }
 }

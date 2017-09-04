@@ -1,5 +1,6 @@
 package com.acme.edu.handler;
 
+import com.acme.edu.MessageEventHandlerState;
 import com.acme.edu.State;
 import com.acme.edu.event.ByteMessageLoggedEvent;
 import com.acme.edu.event.FlushCacheEvent;
@@ -21,10 +22,12 @@ public class FlushCacheEventHandlerTest {
     Formatter formatter = mock(Formatter.class);
     EventDispatcher dispatcher = mock(EventDispatcher.class);
     FlushCacheEventHandler sut = new FlushCacheEventHandler(saver, formatter, dispatcher);
+    MessageEventHandlerState messageEventHandlerState = new MessageEventHandlerState();
 
     @Test
     public void shouldCallDispatcherToFlushAggregatedIntMessages() {
-        FlushCacheEvent flushCacheEvent = new FlushCacheEvent(State.INT_INPUT);
+        FlushCacheEvent flushCacheEvent = new FlushCacheEvent(messageEventHandlerState);
+        messageEventHandlerState.switchState(State.INT_INPUT);
         sut.onEvent(flushCacheEvent);
 
         verify(dispatcher, times(1)).dispatch(isA(IntMessageLoggedEvent.class));
@@ -33,7 +36,8 @@ public class FlushCacheEventHandlerTest {
 
     @Test
     public void shouldCallDispatcherToFlushAggregatedStringMessages() {
-        FlushCacheEvent flushCacheEvent = new FlushCacheEvent(State.STRING_INPUT);
+        FlushCacheEvent flushCacheEvent = new FlushCacheEvent(messageEventHandlerState);
+        messageEventHandlerState.switchState(State.STRING_INPUT);
         sut.onEvent(flushCacheEvent);
 
         verify(dispatcher, times(1)).dispatch(isA(StringMessageLoggedEvent.class));
@@ -42,7 +46,8 @@ public class FlushCacheEventHandlerTest {
 
     @Test
     public void shouldCallDispatcherToFlushAggregatedByteMessages() {
-        FlushCacheEvent flushCacheEvent = new FlushCacheEvent(State.BYTE_INPUT);
+        FlushCacheEvent flushCacheEvent = new FlushCacheEvent(messageEventHandlerState);
+        messageEventHandlerState.switchState(State.BYTE_INPUT);
         sut.onEvent(flushCacheEvent);
 
         verify(dispatcher, times(1)).dispatch(isA(ByteMessageLoggedEvent.class));
@@ -51,11 +56,12 @@ public class FlushCacheEventHandlerTest {
 
     @Test
     public void shouldDoNothingWhenStateChangedFromOtheStatesWhichDontNeedAggregation() {
-        FlushCacheEvent flushCacheEvent = new FlushCacheEvent(State.OBJECT_INPUT);
+        FlushCacheEvent flushCacheEvent = new FlushCacheEvent(messageEventHandlerState);
+        messageEventHandlerState.switchState(State.OBJECT_INPUT);
         sut.onEvent(flushCacheEvent);
-        flushCacheEvent = new FlushCacheEvent(State.BOOLEAN_INPUT);
+        messageEventHandlerState.switchState(State.BOOLEAN_INPUT);
         sut.onEvent(flushCacheEvent);
-        flushCacheEvent = new FlushCacheEvent(State.CHAR_INPUT);
+        messageEventHandlerState.switchState(State.CHAR_INPUT);
         sut.onEvent(flushCacheEvent);
 
         verify(dispatcher, times(0)).dispatch(isA(Event.class));

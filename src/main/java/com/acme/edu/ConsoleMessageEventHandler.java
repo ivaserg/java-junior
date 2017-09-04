@@ -2,6 +2,7 @@ package com.acme.edu;
 
 
 import com.acme.edu.event.*;
+import com.acme.edu.exception.IllegalInputMessageException;
 import com.acme.edu.formatter.Formatter;
 import com.acme.edu.framework.EventDispatcher;
 import com.acme.edu.handler.*;
@@ -43,7 +44,7 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
 
 
     public void flushCache() {
-        dispatcher.dispatch(new FlushCacheEvent(messageEventHandlerState.getPreviousState()));
+        dispatcher.dispatch(new FlushCacheEvent(messageEventHandlerState));
     }
 
     @Override
@@ -55,7 +56,11 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
         } else if (message instanceof Character) {
             log((char) message);
         } else if (message instanceof String) {
-            log((String) message);
+            try {
+                log((String) message);
+            } catch (IllegalInputMessageException e) {
+                e.printStackTrace();
+            }
         } else if (message instanceof Boolean) {
             log((boolean) message);
         } else {
@@ -92,7 +97,9 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
 
 
     public void log(String message) {
-        if (message == null) return;
+        if (message == null || message.isEmpty()) {
+            throw new IllegalInputMessageException("Input string message cannot be null or empty.");
+        }
         messageEventHandlerState.switchState(State.STRING_INPUT);
         if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
