@@ -1,6 +1,7 @@
 package com.acme.edu;
 
 import com.acme.edu.event.*;
+import com.acme.edu.exception.LoggerBaseException;
 import com.acme.edu.formatter.Formatter;
 import com.acme.edu.framework.EventDispatcher;
 import com.acme.edu.saver.Saver;
@@ -25,7 +26,7 @@ public class ConsoleMessageEventHandlerTest {
 
 
     @Test
-    public void shouldChangeStateToSTRING_INPUTandSendToDispatcherStringMessageEvent() {
+    public void shouldChangeStateToSTRING_INPUTandSendToDispatcherStringMessageEvent() throws LoggerBaseException {
 
         String stringMessage = "1";
         sut.log(stringMessage);
@@ -36,7 +37,7 @@ public class ConsoleMessageEventHandlerTest {
     }
 
     @Test
-    public void shouldChangeStateToINT_INPUTandSendToDispatcherIntMessageEvent() {
+    public void shouldChangeStateToINT_INPUTandSendToDispatcherIntMessageEvent() throws LoggerBaseException {
 
         int intMessage = 1;
         sut.log(intMessage);
@@ -47,7 +48,7 @@ public class ConsoleMessageEventHandlerTest {
     }
 
     @Test
-    public void shouldChangeStateToBYTE_INPUTandSendToDispatcheByteMessageEvent() {
+    public void shouldChangeStateToBYTE_INPUTandSendToDispatcheByteMessageEvent() throws LoggerBaseException {
 
         byte byteMessage = 1;
         sut.log(byteMessage);
@@ -58,7 +59,7 @@ public class ConsoleMessageEventHandlerTest {
     }
 
     @Test
-    public void shouldChangeStateToCHAR_INPUTandSendToDispatcherCharMessageEvent() {
+    public void shouldChangeStateToCHAR_INPUTandSendToDispatcherCharMessageEvent() throws LoggerBaseException {
 
         char charMessge = 'a';
         sut.log(charMessge);
@@ -68,7 +69,7 @@ public class ConsoleMessageEventHandlerTest {
     }
 
     @Test
-    public void shouldChangeStateToBOOLEAN_INPUTandSendToDispatcherBooleanMessageEvent() {
+    public void shouldChangeStateToBOOLEAN_INPUTandSendToDispatcherBooleanMessageEvent() throws LoggerBaseException {
 
         boolean booleanMessge = true;
         sut.log(booleanMessge);
@@ -78,7 +79,7 @@ public class ConsoleMessageEventHandlerTest {
     }
 
     @Test
-    public void shouldChangeStateToOBJECT_INPUTandSendToDispatcherObjectMessageEvent() {
+    public void shouldChangeStateToOBJECT_INPUTandSendToDispatcherObjectMessageEvent() throws LoggerBaseException {
 
         Object objectMessage = new Object();
         sut.log(objectMessage);
@@ -88,14 +89,14 @@ public class ConsoleMessageEventHandlerTest {
     }
 
     @Test
-    public void shouldSendFlushCacheEventWhenEndLogSessionCalled() {
+    public void shouldSendFlushCacheEventWhenEndLogSessionCalled() throws LoggerBaseException {
         sut.endLogSession();
 
         verify(eventDispatcher).dispatch(isA(FlushCacheEvent.class));
     }
 
     @Test
-    public void shouldSendFlushCacheEventEachTimeWhenInputStateChanges() {
+    public void shouldSendFlushCacheEventEachTimeWhenInputStateChanges() throws LoggerBaseException {
         int intMessage = 1;
         byte byteMessage = 1;
         String stringMessage = "1";
@@ -114,7 +115,7 @@ public class ConsoleMessageEventHandlerTest {
     }
 
     @Test
-    public void shouldNotSendFlushCacheEventWhenInputStateChanges() {
+    public void shouldNotSendFlushCacheEventWhenInputStateChanges() throws LoggerBaseException {
         int intMessage1 = 1;
         int intMessage2 = 2;
 

@@ -1,6 +1,8 @@
 package com.acme.edu.framework;
 
+import com.acme.edu.exception.LoggerBaseException;
 import com.acme.edu.exception.MessageHandlingException;
+import com.acme.edu.exception.NoHandlerException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,16 +36,12 @@ public class EventDispatcher {
      * @param event The {@link Event} to be dispatched
      */
     @SuppressWarnings("unchecked")
-    public <E extends Event> void dispatch(E event) {
+    public <E extends Event> void dispatch(E event) throws LoggerBaseException {
         Handler<E> handler = (Handler<E>) handlers.get(event.getClass());
         if (handler != null) {
-            try {
-                handler.onEvent(event);
-            }
-            catch (MessageHandlingException e) {
-
-            }
-
+            handler.onEvent(event);
+        } else {
+            throw new NoHandlerException("Failed to find a handler to process "+ event.getClass());
         }
     }
 

@@ -1,5 +1,8 @@
 package com.acme.edu.handler;
 
+import com.acme.edu.exception.MessageFormattingException;
+import com.acme.edu.exception.MessageHandlingException;
+import com.acme.edu.exception.MessageSavingException;
 import com.acme.edu.formatter.Formatter;
 import com.acme.edu.saver.Saver;
 import com.acme.edu.event.BooleanMessageLoggedEvent;
@@ -17,7 +20,17 @@ public class BooleanMessageLoggedEventHandler implements Handler<BooleanMessageL
     }
 
     @Override
-    public void onEvent(BooleanMessageLoggedEvent event) {
-        saver.save(formatter.format(TYPE_DESCRIPTION + event.getMessage()));
+    public void onEvent(BooleanMessageLoggedEvent event) throws MessageHandlingException {
+        processMessage(TYPE_DESCRIPTION + event.getMessage());
+    }
+
+    private void processMessage(String message) throws MessageHandlingException {
+        try {
+            saver.save(formatter.format(message));
+        } catch (MessageSavingException e) {
+            throw new MessageHandlingException(String.format("Failed to save BOOLEAN message: \"%s\"", message), e.getCause());
+        } catch (MessageFormattingException e) {
+            throw new MessageHandlingException(String.format("Failed to format BOOLEAN message: \"%s\"", message), e.getCause());
+        }
     }
 }

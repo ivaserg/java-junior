@@ -6,6 +6,7 @@ import com.acme.edu.event.ByteMessageLoggedEvent;
 import com.acme.edu.event.FlushCacheEvent;
 import com.acme.edu.event.IntMessageLoggedEvent;
 import com.acme.edu.event.StringMessageLoggedEvent;
+import com.acme.edu.exception.LoggerBaseException;
 import com.acme.edu.formatter.Formatter;
 import com.acme.edu.framework.Event;
 import com.acme.edu.framework.EventDispatcher;
@@ -25,7 +26,7 @@ public class FlushCacheEventHandlerTest {
     MessageEventHandlerState messageEventHandlerState = new MessageEventHandlerState();
 
     @Test
-    public void shouldCallDispatcherToFlushAggregatedIntMessages() {
+    public void shouldCallDispatcherToFlushAggregatedIntMessages() throws LoggerBaseException  {
         FlushCacheEvent flushCacheEvent = new FlushCacheEvent(messageEventHandlerState);
         messageEventHandlerState.switchState(State.INT_INPUT);
         sut.onEvent(flushCacheEvent);
@@ -35,7 +36,7 @@ public class FlushCacheEventHandlerTest {
     }
 
     @Test
-    public void shouldCallDispatcherToFlushAggregatedStringMessages() {
+    public void shouldCallDispatcherToFlushAggregatedStringMessages() throws LoggerBaseException {
         FlushCacheEvent flushCacheEvent = new FlushCacheEvent(messageEventHandlerState);
         messageEventHandlerState.switchState(State.STRING_INPUT);
         sut.onEvent(flushCacheEvent);
@@ -45,7 +46,7 @@ public class FlushCacheEventHandlerTest {
     }
 
     @Test
-    public void shouldCallDispatcherToFlushAggregatedByteMessages() {
+    public void shouldCallDispatcherToFlushAggregatedByteMessages() throws LoggerBaseException {
         FlushCacheEvent flushCacheEvent = new FlushCacheEvent(messageEventHandlerState);
         messageEventHandlerState.switchState(State.BYTE_INPUT);
         sut.onEvent(flushCacheEvent);
@@ -55,7 +56,7 @@ public class FlushCacheEventHandlerTest {
     }
 
     @Test
-    public void shouldDoNothingWhenStateChangedFromOtheStatesWhichDontNeedAggregation() {
+    public void shouldDoNothingWhenStateChangedFromOtheStatesWhichDontNeedAggregation() throws LoggerBaseException {
         FlushCacheEvent flushCacheEvent = new FlushCacheEvent(messageEventHandlerState);
         messageEventHandlerState.switchState(State.OBJECT_INPUT);
         sut.onEvent(flushCacheEvent);

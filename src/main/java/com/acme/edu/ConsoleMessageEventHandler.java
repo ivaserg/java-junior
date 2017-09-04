@@ -3,12 +3,17 @@ package com.acme.edu;
 
 import com.acme.edu.event.*;
 import com.acme.edu.exception.IllegalInputMessageException;
+import com.acme.edu.exception.LoggerBaseException;
+import com.acme.edu.exception.MessageHandlingException;
+import com.acme.edu.formatter.DefaultFormatter;
 import com.acme.edu.formatter.Formatter;
+import com.acme.edu.framework.Event;
 import com.acme.edu.framework.EventDispatcher;
 import com.acme.edu.handler.*;
+import com.acme.edu.saver.ConsoleSaver;
 import com.acme.edu.saver.Saver;
 
-public class ConsoleMessageEventHandler implements MessageEventHandler {
+public class ConsoleMessageEventHandler {
     private MessageEventHandlerState messageEventHandlerState = new MessageEventHandlerState();
     private EventDispatcher dispatcher;
     private Saver saver;
@@ -37,62 +42,49 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
         dispatcher.registerHandler(FlushCacheEvent.class, new FlushCacheEventHandler(saver, formatter, dispatcher));
     }
 
-    public void endLogSession() {
+    public void endLogSession() throws LoggerBaseException {
         messageEventHandlerState.switchState(messageEventHandlerState.getPreviousState());
         flushCache();
     }
 
 
-    public void flushCache() {
-        dispatcher.dispatch(new FlushCacheEvent(messageEventHandlerState));
-    }
-
-    @Override
-    public void handleEvent(Object message) {
-        if (message instanceof Integer) {
-            log((int) message);
-        } else if (message instanceof Byte) {
-            log((byte) message);
-        } else if (message instanceof Character) {
-            log((char) message);
-        } else if (message instanceof String) {
-            log((String) message);
-        } else if (message instanceof Boolean) {
-            log((boolean) message);
-        } else {
-            log(message);
-        }
+    public void flushCache() throws LoggerBaseException {
+        dispatchEvent(new FlushCacheEvent(messageEventHandlerState));
     }
 
 
-    public void log(int message) {
+    public void log(int message) throws LoggerBaseException {
         messageEventHandlerState.switchState(State.INT_INPUT);
         if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
         }
-        dispatcher.dispatch(new IntMessageLoggedEvent(String.valueOf(message), true));
+        try {
+            dispatchEvent(new IntMessageLoggedEvent(String.valueOf(message), true));
+        } catch (LoggerBaseException e) {
+            e.printStackTrace();
+        }
     }
 
 
-    public void log(byte message) {
+    public void log(byte message) throws LoggerBaseException {
         messageEventHandlerState.switchState(State.BYTE_INPUT);
         if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
         }
-        dispatcher.dispatch(new ByteMessageLoggedEvent(String.valueOf(message), true));
+        dispatchEvent(new ByteMessageLoggedEvent(String.valueOf(message), true));
     }
 
 
-    public void log(char message) {
+    public void log(char message) throws LoggerBaseException {
         messageEventHandlerState.switchState(State.CHAR_INPUT);
         if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
         }
-        dispatcher.dispatch(new CharMessageLoggedEvent(String.valueOf(message)));
+        dispatchEvent(new CharMessageLoggedEvent(String.valueOf(message)));
     }
 
 
-    public void log(String message) {
+    public void log(String message) throws LoggerBaseException {
         if (message == null || message.isEmpty()) {
             throw new IllegalInputMessageException("Input string message cannot be null or empty.");
         }
@@ -100,27 +92,27 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
         if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
         }
-        dispatcher.dispatch(new StringMessageLoggedEvent(message, true));
+        dispatchEvent(new StringMessageLoggedEvent(message, true));
     }
 
 
-    public void log(boolean message) {
+    public void log(boolean message) throws LoggerBaseException {
         messageEventHandlerState.switchState(State.BOOLEAN_INPUT);
         if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
         }
-        dispatcher.dispatch(new BooleanMessageLoggedEvent(Boolean.toString(message)));
+        dispatchEvent(new BooleanMessageLoggedEvent(Boolean.toString(message)));
 
     }
 
 
-    public void log(Object message) {
+    public void log(Object message) throws LoggerBaseException{
         if (message == null) return;
         messageEventHandlerState.switchState(State.OBJECT_INPUT);
         if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
         }
-        dispatcher.dispatch(new ObjectMessageLoggedEvent(message.toString()));
+        dispatchEvent(new ObjectMessageLoggedEvent(message.toString()));
     }
 
     public MessageEventHandlerState getMessageEventHandlerState() {
@@ -131,4 +123,16 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
         return dispatcher;
     }
 
+    private void dispatchEvent(Event event) throws LoggerBaseException {
+        try {
+            dispatcher.dispatch(event);
+        } catch (MessageHandlingException e) {
+            throw new LoggerBaseException("Failed to dispatch message", e.getCause());
+        }
+    }
+
+    public static void main(String[] args) throws LoggerBaseException {
+        ConsoleMessageEventHandler consoleMessageEventHandler = new ConsoleMessageEventHandler(new ConsoleSaver(), new DefaultFormatter());
+        consoleMessageEventHandler.log(true);
+    }
 }

@@ -1,13 +1,16 @@
 package com.acme.edu.handler;
 
 import com.acme.edu.event.StringMessageLoggedEvent;
+import com.acme.edu.exception.MessageFormattingException;
+import com.acme.edu.exception.MessageHandlingException;
+import com.acme.edu.exception.MessageSavingException;
 import com.acme.edu.formatter.Formatter;
 import com.acme.edu.framework.Handler;
 import com.acme.edu.saver.Saver;
 
 public class StringMessageLoggedEventHandler implements Handler<StringMessageLoggedEvent> {
     private static final String TYPE_DESCRIPTION = "string: ";
-    private String cachedMessage="";
+    private String cachedMessage = "";
     private int aggregatedValue;
 
     private Saver saver;
@@ -19,32 +22,42 @@ public class StringMessageLoggedEventHandler implements Handler<StringMessageLog
     }
 
     @Override
-    public void onEvent(StringMessageLoggedEvent event) {
+    public void onEvent(StringMessageLoggedEvent event) throws MessageHandlingException {
         String currentMessage = event.getMessage();
         if (event.isCollectionNeeded()) {
             if (currentMessage.equals(cachedMessage) || cachedMessage.isEmpty()) {
                 cachedMessage = currentMessage;
                 aggregatedValue++;
             } else {
-                saver.save(formatter.format(TYPE_DESCRIPTION + cachedMessage + getNumberOfCachedMessages()));
+                processMessage(TYPE_DESCRIPTION + cachedMessage + getNumberOfCachedMessages());
                 cachedMessage = currentMessage;
-                aggregatedValue=1;
+                aggregatedValue = 1;
             }
         } else {
-            if (currentMessage.equals(cachedMessage) || cachedMessage.isEmpty())  {
+            if (currentMessage.equals(cachedMessage) || cachedMessage.isEmpty()) {
                 aggregatedValue++;
-                saver.save(formatter.format(TYPE_DESCRIPTION + currentMessage + getNumberOfCachedMessages()));
-                aggregatedValue=0;
-                cachedMessage="";
+                processMessage(TYPE_DESCRIPTION + currentMessage + getNumberOfCachedMessages());
+                aggregatedValue = 0;
+                cachedMessage = "";
             } else {
-                saver.save(formatter.format(TYPE_DESCRIPTION + cachedMessage + getNumberOfCachedMessages()));
-                aggregatedValue=0;
-                saver.save(formatter.format(TYPE_DESCRIPTION + currentMessage + getNumberOfCachedMessages()));
-                cachedMessage="";
+                processMessage(TYPE_DESCRIPTION + cachedMessage + getNumberOfCachedMessages());
+                aggregatedValue = 0;
+                processMessage(TYPE_DESCRIPTION + currentMessage + getNumberOfCachedMessages());
+                cachedMessage = "";
             }
 
         }
 
+    }
+
+    private void processMessage(String message) throws MessageHandlingException {
+        try {
+            saver.save(formatter.format(message));
+        } catch (MessageSavingException e) {
+            throw new MessageHandlingException(String.format("Failed to save STRING message: \"%s\"", message), e.getCause());
+        } catch (MessageFormattingException e) {
+            throw new MessageHandlingException(String.format("Failed to format STRING message: \"%s\"", message), e.getCause());
+        }
     }
 
     private String getNumberOfCachedMessages() {

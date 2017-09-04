@@ -1,5 +1,8 @@
 package com.acme.edu.framework;
 
+import com.acme.edu.exception.LoggerBaseException;
+import com.acme.edu.exception.MessageHandlingException;
+
 /**
  * This interface can be implemented to handle different types of messages.
  * Every handler is responsible for a single of type message
@@ -13,5 +16,5 @@ public interface Handler<E extends Event> {
      * a queue to be consumed by other sub systems.
      * @param event the {@link Event} object to be handled.
      */
-    void onEvent(E event);
+    void onEvent(E event) throws LoggerBaseException;
 }

@@ -7,9 +7,9 @@ import java.io.IOException;
 public class ConsoleSaver implements Saver {
     @Override
     public void save(String message) throws MessageSavingException {
-
         try {
             System.out.println(message);
+            throw new IOException("failed to find file");
         } catch (Exception e) {
             throw new MessageSavingException("Failed to log message to console", e.getCause());
         }
