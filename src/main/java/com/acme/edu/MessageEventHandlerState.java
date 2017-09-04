@@ -1,9 +1,14 @@
 package com.acme.edu;
 
 public class MessageEventHandlerState {
+
     private State currentState = State.INIT_STATE;
     private State previousState  = State.INIT_STATE;
 
+
+    public State getCurrentState() {
+        return currentState;
+    }
 
     public State getPreviousState() {
         return previousState;

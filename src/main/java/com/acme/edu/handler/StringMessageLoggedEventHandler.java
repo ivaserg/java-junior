@@ -1,11 +1,9 @@
 package com.acme.edu.handler;
 
-import com.acme.edu.formatter.DefaultFormatter;
-import com.acme.edu.formatter.Formatter;
-import com.acme.edu.saver.ConsoleSaver;
-import com.acme.edu.saver.Saver;
 import com.acme.edu.event.StringMessageLoggedEvent;
+import com.acme.edu.formatter.Formatter;
 import com.acme.edu.framework.Handler;
+import com.acme.edu.saver.Saver;
 
 public class StringMessageLoggedEventHandler implements Handler<StringMessageLoggedEvent> {
     private static final String TYPE_DESCRIPTION = "string: ";
@@ -53,17 +51,5 @@ public class StringMessageLoggedEventHandler implements Handler<StringMessageLog
         return aggregatedValue > 1 ? " (x" + aggregatedValue + ")" : "";
     }
 
-    public static void main(String[] args) {
-        StringMessageLoggedEventHandler sut = new StringMessageLoggedEventHandler(new ConsoleSaver(), new DefaultFormatter());
 
-        sut.onEvent(new StringMessageLoggedEvent("str 1", true));
-        sut.onEvent(new StringMessageLoggedEvent("str 1", true));
-        sut.onEvent(new StringMessageLoggedEvent("str 3", true));
-        sut.onEvent(new StringMessageLoggedEvent("str 4", true));
-        sut.onEvent(new StringMessageLoggedEvent("str 4", true));
-        sut.onEvent(new StringMessageLoggedEvent("str 4", true));
-        sut.onEvent(new StringMessageLoggedEvent("str 4", true));
-        sut.onEvent(new StringMessageLoggedEvent("str 4", true));
-        sut.onEvent(new StringMessageLoggedEvent("str 1", false));
-    }
 }

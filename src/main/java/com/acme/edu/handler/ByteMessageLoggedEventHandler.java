@@ -1,10 +1,9 @@
 package com.acme.edu.handler;
 
-import com.acme.edu.event.IntMessageLoggedEvent;
-import com.acme.edu.formatter.Formatter;
-import com.acme.edu.saver.Saver;
 import com.acme.edu.event.ByteMessageLoggedEvent;
+import com.acme.edu.formatter.Formatter;
 import com.acme.edu.framework.Handler;
+import com.acme.edu.saver.Saver;
 
 public class ByteMessageLoggedEventHandler implements Handler<ByteMessageLoggedEvent>{
     private static final String TYPE_DESCRIPTION = "primitive: ";

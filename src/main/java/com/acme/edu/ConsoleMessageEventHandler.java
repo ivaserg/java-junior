@@ -9,14 +9,21 @@ import com.acme.edu.saver.Saver;
 
 public class ConsoleMessageEventHandler implements MessageEventHandler {
     private MessageEventHandlerState messageEventHandlerState = new MessageEventHandlerState();
-    private EventDispatcher dispatcher = new EventDispatcher();
+    private EventDispatcher dispatcher;
     private Saver saver;
     private Formatter formatter;
 
     public ConsoleMessageEventHandler(Saver saver, Formatter formatter) {
         this.saver = saver;
         this.formatter = formatter;
+        dispatcher = new EventDispatcher();
         initDispatcher();
+    }
+
+    public ConsoleMessageEventHandler(Saver saver, Formatter formatter, EventDispatcher eventDispatcher) {
+        this.saver = saver;
+        this.formatter = formatter;
+        this.dispatcher = eventDispatcher;
     }
 
     public void initDispatcher() {
@@ -113,6 +120,12 @@ public class ConsoleMessageEventHandler implements MessageEventHandler {
         dispatcher.dispatch(new ObjectMessageLoggedEvent(message.toString()));
     }
 
+    public MessageEventHandlerState getMessageEventHandlerState() {
+        return messageEventHandlerState;
+    }
 
+    public EventDispatcher getDispatcher() {
+        return dispatcher;
+    }
 
 }
