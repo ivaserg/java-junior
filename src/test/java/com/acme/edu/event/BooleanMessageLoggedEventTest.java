@@ -12,7 +12,6 @@ public class BooleanMessageLoggedEventTest {
 
         BooleanMessageLoggedEvent booleanMessageLoggedEvent = new BooleanMessageLoggedEvent("true");
 
-
         assertThat(booleanMessageLoggedEvent.getMessage()).isEqualTo("true");
 
     }

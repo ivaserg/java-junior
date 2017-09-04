@@ -9,7 +9,6 @@ public class ByteMessageLoggedEventTest {
     public void getMessage() throws Exception {
         ByteMessageLoggedEvent byteMessageLoggedEvent = new ByteMessageLoggedEvent("10", true);
 
-
         assertThat(byteMessageLoggedEvent.getMessage()).isEqualTo("10");
 
     }

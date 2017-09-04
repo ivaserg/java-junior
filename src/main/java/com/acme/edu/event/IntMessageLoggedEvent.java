@@ -4,10 +4,6 @@ public class IntMessageLoggedEvent extends AbstractEvent {
     private String message;
     private boolean collectionNeeded;
 
-    public IntMessageLoggedEvent(String message) {
-        this.message = message;
-    }
-
     public IntMessageLoggedEvent(String message, boolean collectionNeeded) {
         this.message = message;
         this.collectionNeeded = collectionNeeded;
