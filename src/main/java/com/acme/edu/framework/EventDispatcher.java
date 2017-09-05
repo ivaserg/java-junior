@@ -36,7 +36,7 @@ public class EventDispatcher {
      * @param event The {@link Event} to be dispatched
      */
     @SuppressWarnings("unchecked")
-    public <E extends Event> void dispatch(E event) throws LoggerBaseException {
+    public <E extends Event> void dispatch(E event) throws MessageHandlingException {
         Handler<E> handler = (Handler<E>) handlers.get(event.getClass());
         if (handler != null) {
             handler.onEvent(event);

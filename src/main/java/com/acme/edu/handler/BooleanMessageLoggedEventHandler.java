@@ -28,9 +28,13 @@ public class BooleanMessageLoggedEventHandler implements Handler<BooleanMessageL
         try {
             saver.save(formatter.format(message));
         } catch (MessageSavingException e) {
-            throw new MessageHandlingException(String.format("Failed to save BOOLEAN message: \"%s\"", message), e.getCause());
+            MessageHandlingException exception = new MessageHandlingException(String.format("Failed to save BOOLEAN message: \"%s\"", message), e.getCause());
+            exception.addSuppressed(e);
+            throw exception;
         } catch (MessageFormattingException e) {
-            throw new MessageHandlingException(String.format("Failed to format BOOLEAN message: \"%s\"", message), e.getCause());
+            MessageHandlingException exception = new MessageHandlingException(String.format("Failed to format BOOLEAN message: \"%s\"", message), e.getCause());
+            exception.addSuppressed(e);
+            throw exception;
         }
     }
 }

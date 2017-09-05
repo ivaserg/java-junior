@@ -1,5 +1,6 @@
 package com.acme.edu.saver;
 
+import com.acme.edu.exception.MessageHandlingException;
 import com.acme.edu.exception.MessageSavingException;
 
 import java.io.IOException;
@@ -11,7 +12,9 @@ public class ConsoleSaver implements Saver {
             System.out.println(message);
             throw new IOException("failed to find file");
         } catch (Exception e) {
-            throw new MessageSavingException("Failed to log message to console", e.getCause());
+            MessageSavingException exception = new MessageSavingException("Failed to save message to console", e.getCause());
+            exception.addSuppressed(e);
+            throw exception;
         }
     }
 }

@@ -2,10 +2,18 @@ package com.acme.edu;
 
 import com.acme.edu.event.*;
 import com.acme.edu.exception.LoggerBaseException;
+import com.acme.edu.formatter.DefaultFormatter;
 import com.acme.edu.formatter.Formatter;
 import com.acme.edu.framework.EventDispatcher;
+import com.acme.edu.saver.ConsoleSaver;
 import com.acme.edu.saver.Saver;
 import org.junit.Test;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.Properties;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Matchers.isA;
@@ -121,4 +129,7 @@ public class ConsoleMessageEventHandlerTest {
 
         verify(eventDispatcher, times(0)).dispatch(isA(FlushCacheEvent.class));
     }
+
+
+
 }

@@ -16,5 +16,5 @@ public interface Handler<E extends Event> {
      * a queue to be consumed by other sub systems.
      * @param event the {@link Event} object to be handled.
      */
-    void onEvent(E event) throws LoggerBaseException;
+    void onEvent(E event) throws MessageHandlingException;
 }

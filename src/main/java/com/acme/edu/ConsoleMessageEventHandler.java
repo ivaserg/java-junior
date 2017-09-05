@@ -3,7 +3,6 @@ package com.acme.edu;
 
 import com.acme.edu.event.*;
 import com.acme.edu.exception.IllegalInputMessageException;
-import com.acme.edu.exception.LoggerBaseException;
 import com.acme.edu.exception.MessageHandlingException;
 import com.acme.edu.formatter.DefaultFormatter;
 import com.acme.edu.formatter.Formatter;
@@ -12,6 +11,11 @@ import com.acme.edu.framework.EventDispatcher;
 import com.acme.edu.handler.*;
 import com.acme.edu.saver.ConsoleSaver;
 import com.acme.edu.saver.Saver;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class ConsoleMessageEventHandler {
     private MessageEventHandlerState messageEventHandlerState = new MessageEventHandlerState();
@@ -42,31 +46,28 @@ public class ConsoleMessageEventHandler {
         dispatcher.registerHandler(FlushCacheEvent.class, new FlushCacheEventHandler(saver, formatter, dispatcher));
     }
 
-    public void endLogSession() throws LoggerBaseException {
+    public void endLogSession() {
         messageEventHandlerState.switchState(messageEventHandlerState.getPreviousState());
         flushCache();
     }
 
 
-    public void flushCache() throws LoggerBaseException {
+    public void flushCache()  {
         dispatchEvent(new FlushCacheEvent(messageEventHandlerState));
     }
 
 
-    public void log(int message) throws LoggerBaseException {
+    public void log(int message) {
         messageEventHandlerState.switchState(State.INT_INPUT);
         if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
         }
-        try {
-            dispatchEvent(new IntMessageLoggedEvent(String.valueOf(message), true));
-        } catch (LoggerBaseException e) {
-            e.printStackTrace();
-        }
+        dispatchEvent(new IntMessageLoggedEvent(String.valueOf(message), true));
+
     }
 
 
-    public void log(byte message) throws LoggerBaseException {
+    public void log(byte message) {
         messageEventHandlerState.switchState(State.BYTE_INPUT);
         if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
@@ -75,7 +76,7 @@ public class ConsoleMessageEventHandler {
     }
 
 
-    public void log(char message) throws LoggerBaseException {
+    public void log(char message) {
         messageEventHandlerState.switchState(State.CHAR_INPUT);
         if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
@@ -84,7 +85,7 @@ public class ConsoleMessageEventHandler {
     }
 
 
-    public void log(String message) throws LoggerBaseException {
+    public void log(String message) {
         if (message == null || message.isEmpty()) {
             throw new IllegalInputMessageException("Input string message cannot be null or empty.");
         }
@@ -96,7 +97,7 @@ public class ConsoleMessageEventHandler {
     }
 
 
-    public void log(boolean message) throws LoggerBaseException {
+    public void log(boolean message) {
         messageEventHandlerState.switchState(State.BOOLEAN_INPUT);
         if (messageEventHandlerState.isStateSwitched()) {
             flushCache();
@@ -106,7 +107,7 @@ public class ConsoleMessageEventHandler {
     }
 
 
-    public void log(Object message) throws LoggerBaseException{
+    public void log(Object message)  {
         if (message == null) return;
         messageEventHandlerState.switchState(State.OBJECT_INPUT);
         if (messageEventHandlerState.isStateSwitched()) {
@@ -123,16 +124,50 @@ public class ConsoleMessageEventHandler {
         return dispatcher;
     }
 
-    private void dispatchEvent(Event event) throws LoggerBaseException {
+    private void dispatchEvent(Event event)  {
         try {
             dispatcher.dispatch(event);
         } catch (MessageHandlingException e) {
-            throw new LoggerBaseException("Failed to dispatch message", e.getCause());
+           e.printStackTrace();
         }
     }
 
-    public static void main(String[] args) throws LoggerBaseException {
-        ConsoleMessageEventHandler consoleMessageEventHandler = new ConsoleMessageEventHandler(new ConsoleSaver(), new DefaultFormatter());
-        consoleMessageEventHandler.log(true);
+    public String getPropValues() throws IOException {
+
+        String result = "";
+        Properties prop = new Properties();
+        String propFileName = "config.properties";
+
+        try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(propFileName))
+        {
+            if (inputStream != null) {
+                prop.load(inputStream);
+            } else {
+                throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
+            }
+
+            String host = prop.getProperty("host");
+            String port = prop.getProperty("port");
+
+            result = host + " " + port;
+
+        } catch (Exception e) {
+            System.out.println("Exception: " + e);
+        }
+        return result;
     }
+
+
+    public static void main(String[] args) throws IOException {
+
+//      Properties properties = System.getProperties();
+//      for (String propName: properties.stringPropertyNames()) {
+//          System.out.println(propName + " " + System.getProperty(propName));
+//      }
+
+
+        ConsoleMessageEventHandler sut = new ConsoleMessageEventHandler(new ConsoleSaver(), new DefaultFormatter());
+        System.out.println(sut.getPropValues());
+    }
+
 }

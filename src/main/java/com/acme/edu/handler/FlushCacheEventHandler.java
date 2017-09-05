@@ -25,7 +25,7 @@ public class FlushCacheEventHandler implements Handler<FlushCacheEvent> {
     }
 
     @Override
-    public void onEvent(FlushCacheEvent event) throws LoggerBaseException {
+    public void onEvent(FlushCacheEvent event) throws MessageHandlingException {
         State state = event.getPreviousState();
         switch (state) {
             case INT_INPUT:
@@ -43,11 +43,8 @@ public class FlushCacheEventHandler implements Handler<FlushCacheEvent> {
 
     }
 
-    private void dispatchEvent(Event event) throws LoggerBaseException {
-        try {
+    private void dispatchEvent(Event event) throws MessageHandlingException {
             dispatcher.dispatch(event);
-        } catch (MessageHandlingException e) {
-            throw new LoggerBaseException("Failed to dispatch message", e.getCause());
-        }
+
     }
 }
