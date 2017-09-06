@@ -11,6 +11,8 @@ import com.acme.edu.framework.EventDispatcher;
 import com.acme.edu.handler.*;
 import com.acme.edu.saver.ConsoleSaver;
 import com.acme.edu.saver.Saver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,6 +20,9 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class ConsoleMessageEventHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleMessageEventHandler.class);
+
     private MessageEventHandlerState messageEventHandlerState = new MessageEventHandlerState();
     private EventDispatcher dispatcher;
     private Saver saver;
@@ -132,42 +137,5 @@ public class ConsoleMessageEventHandler {
         }
     }
 
-    public String getPropValues() throws IOException {
-
-        String result = "";
-        Properties prop = new Properties();
-        String propFileName = "config.properties";
-
-        try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(propFileName))
-        {
-            if (inputStream != null) {
-                prop.load(inputStream);
-            } else {
-                throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
-            }
-
-            String host = prop.getProperty("host");
-            String port = prop.getProperty("port");
-
-            result = host + " " + port;
-
-        } catch (Exception e) {
-            System.out.println("Exception: " + e);
-        }
-        return result;
-    }
-
-
-    public static void main(String[] args) throws IOException {
-
-//      Properties properties = System.getProperties();
-//      for (String propName: properties.stringPropertyNames()) {
-//          System.out.println(propName + " " + System.getProperty(propName));
-//      }
-
-
-        ConsoleMessageEventHandler sut = new ConsoleMessageEventHandler(new ConsoleSaver(), new DefaultFormatter());
-        System.out.println(sut.getPropValues());
-    }
 
 }
